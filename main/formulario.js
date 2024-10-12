@@ -20,5 +20,5 @@ function esconderFormulario(e){
 function loginToHome(e){
     e.preventDefault();
     document.querySelector("#parte-de-exito").innerHTML = ""
-    window.location.href="index.html"
+    window.location.href="home.html"
 }
