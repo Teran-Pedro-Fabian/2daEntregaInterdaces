@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+    <header class="header-formulario">
+        <div id="menu" class="menu oculto">
+            <button id="close-btn">X</button>
+            <ul class="ul-menu">
+                <li><a href="home.html">Log in</a></li>
+                <li>redes</li>
+                <li>soporte</li>
+                <li>contactos</li>
+                <li>ayuda</li>
+            </ul>
+
+        </div>
+        <div id="boton" class="hamburger-btn">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div id="espacio" class="ayudaMenu"></div>
+        <div class="input-y-boton">
+            <img src="images/logo_gamelot.png" alt="" srcset="">
+            <input type="text" placeholder="buscar">
+        </div>
+        <div class="fl header_betwenn">
+            <img class="carrito" src="./images/Carrito_compras.png" alt="">
+            <!--usuario-->
+
+            <img class="foto-usuario" src="./images/imagenForo2.png" alt="">
+            <div>
+                <p>Nombre Usuario</p>
+                <a href="tengoCuentaFormulario.html">cerrar sesion</a>
+            </div>
+
+
+        </div>
+
+    </header>
+    <div id="contenedorDeFormulario" class="contenedorFormulario">
+
+        <form id="formulario" class="fl">
+    
+
+            <label for="">Mail</label>
+            <input type="email">
+            <label for="">Contraseña</label>
+            <input type="password" type="text">
+            <label for="">Repetir Contraseña</label>
+            <input type="password" type="text">
+            <img src="images/captcha.png" alt="">
+        
+            <a href="formulario.html">No tengo cuenta</a>
+            <input id="botonFormulario" class="botonFormularioLog" type="button" value="log in">
+            
+        </form>
+    </div>
+    <div id="parte-de-exito" class="oculto">
+        <section>
+            <p>Su cuenta ha sido creada con exito!</p>
+        </section>
+    </div>
+    
+    <footer class="listas"><img src="images/logo_gamelot.png" alt=""></footer>
+    <footer class="listas">
+        <ul>
+            <h3>Acerca de </h3>
+            <li>GAMELOT</li>
+            <li>Generos</li>
+            <li>Foro</li>
+        </ul>
+        <ul>
+            <h3>Contacto</h3>
+            <li>Instagram</li>
+            <li>Facebook</li>
+            <li>Whatsapp</li>
+            <li>Twitter</li>
+        </ul>
+        <ul>
+            <h3>Ayuda</h3>
+            <li>Compra</li>
+            <li>Asistencia</li>
+            <li>Contactos</li>
+            <li>Problemas</li>
+            
+        </ul>
+    </footer>
+    <footer class="listas"><p>© 2024 Copyright Gamelot. Todos los derechos reservados</p></footer>
+    <script src="main/formulario.js"></script>
+    <script src="main/menuHamburguesa.js"></script>
+</body>
+</html>

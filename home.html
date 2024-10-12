@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header-formulario">
+            <div id="menu" class="menu oculto">
+                <button id="close-btn">X</button>
+                <ul class="ul-menu">
+                    <li><a href="home.html">Log in</a></li>
+                    <li>redes</li>
+                    <li>soporte</li>
+                    <li>contactos</li>
+                    <li>ayuda</li>
+                </ul>
+    
+            </div>
+            <div id="boton" class="hamburger-btn">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <div id="espacio" class="ayudaMenu"></div>
+            <div class="input-y-boton">
+                <img src="images/logo_gamelot.png" alt="" srcset="">
+                <input type="text" placeholder="buscar">
+            </div>
+            <div class="fl header_betwenn">
+                <img class="carrito" src="./images/Carrito_compras.png" alt="">
+                <!--usuario-->
+    
+                <img class="foto-usuario" src="./images/imagenForo2.png" alt="">
+                <div>
+                    <p>Nombre Usuario</p>
+                    <a href="tengoCuentaFormulario.html">cerrar sesion</a>
+                </div>
+    
+    
+            </div>
+    
+        </header>
+        <!--fat footer-->
+        <main>
+            <div class="contenedor_carrucel_y_botones">
+                <!--acá van los juegos, capaz que con ul, hay que ver de usar html semántico para mejorar el SEO-->
+
+                <!-- carrucel -->
+                <h4 class="titulo-carrusel">Destacados</h4>
+                <section class="carrucel">
+                    <div class="grande">
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/ajedrez2.jpeg" alt="">
+                            <h2 class="text_card">Chezz 2050</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">$1231</h3>
+
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+
+
+                        </div>
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/callofduty2.jpeg" alt="">
+                            <h2 class="text_card">Call of Duty 22</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">$0,40</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/gameofthrone.jpeg" alt="">
+                            <h2 class="text_card">Game of Throne</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$700</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/regicide.jpeg" alt="">
+                            <h2 class="text_card">Regiside</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">$30300</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/img_4_en_linea.png" alt="">
+                            <h2 class="text_card">4 en Linea</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button id="jugar" class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/ageofempire2.jpeg" alt="">
+                            <h2 class="text_card">Age og Empire</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/principeDePersia2.jpeg" alt="">
+                            <h2 class="text_card">El Principe de Persia</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <!--card de compra -->
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/ageofempire.jpeg" alt="">
+                            <h2 class="text_card">Age Of Empire 2</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">$582</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/dawnOfDead.jpeg" alt="">
+                            <h2 class="text_card">Dawn Of War</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">$40000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/spaceMarine.jpeg" alt="">
+                            <h2 class="text_card">Space Marine</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <div class="card" id="card">
+                            <img class="img_card" src="./images/dawnOfDead2.jpeg" alt="">
+                            <h2 class="text_card">Total War Warhammer Fantasy</h2>
+                            <p class="text_card">Estrategia</p>
+                            <h3 class="text_card">$3000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                    </div>
+                </section>
+                <section class="contenedor_btn_carrucel">
+                    <div id="botonCarrouselIzq" class="btn_carrucel btn_carrucel_izq">
+                        <div id="fechaIzq" class="flecha_carrucel_izq"></div>
+                    </div>
+                    <div id="botonCarrouselDer" class="btn_carrucel btn_carrucel_der">
+                        <div id="fechaDer" class="flecha_carrucel_der"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="contenedor_carrucel_y_botones">
+                <!--acá van los juegos, capaz que con ul, hay que ver de usar html semántico para mejorar el SEO-->
+
+                <!-- carrucel -->
+                <h4 class="titulo-carrusel">Accion</h4>
+                <section class="carrucel">
+                    <div class="grande">
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/callofduty2.jpeg" alt="">
+                            <h2 class="text_card">Call of Duty MW 2</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$423</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/img_4_en_linea.png" alt="">
+                            <h2 class="text_card">Injustise</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$3000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/GTA6.jpeg" alt="">
+                            <h2 class="text_card">GTA 6</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$900</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/Darck.jpeg" alt="">
+                            <h2 class="text_card">Dark Souls</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$1000000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/Destiny.jpg" alt="">
+                            <h2 class="text_card">Destiny 2</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/csgo.avif" alt="">
+                            <h2 class="text_card">Counter Strike 2 GO</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/ironsight.jpg" alt="">
+                            <h2 class="text_card">Iron Sigth</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <!--card de compra -->
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/bayoneta.webp" alt="">
+                            <h2 class="text_card">Bayoneta</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$300</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/godofwar.jpeg" alt="">
+                            <h2 class="text_card">God Of War 1</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$10</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/valorant.png" alt="">
+                            <h2 class="text_card">Valorant</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <div class="card" id="card2">
+                            <img class="img_card" src="./images/leagueoflegends.jpeg" alt="">
+                            <h2 class="text_card">League of legends</h2>
+                            <p class="text_card">Accion</p>
+                            <h3 class="text_card">$500</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                    </div>
+                </section>
+                <section class="contenedor_btn_carrucel">
+                    <div id="botonCarrouselIzq2" class="btn_carrucel btn_carrucel_izq">
+                        <div id="fechaIzq2" class="flecha_carrucel_izq"></div>
+                    </div>
+                    <div id="botonCarrouselDer2" class="btn_carrucel btn_carrucel_der">
+                        <div id="fechaDer2" class="flecha_carrucel_der"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="contenedor_carrucel_y_botones">
+                <!--acá van los juegos, capaz que con ul, hay que ver de usar html semántico para mejorar el SEO-->
+                <!-- carrucel -->
+
+                <h4 class="titulo-carrusel">Terror</h4>
+                <section class="carrucel">
+                    <div class="grande">
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/leftfordead.jpeg" alt="">
+                            <h2 class="text_card">Left for Dead 1</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">3000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/silentHill2.jpeg" alt="">
+                            <h2 class="text_card">Silent Hill 2</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">$1000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/untildawn.jpeg" alt="">
+                            <h2 class="text_card">Until Dawn</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">$6000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/Left_4_Dead_2.webp" alt="">
+                            <h2 class="text_card">Left for Dead 2</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">$3000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/phasmofobia.jpeg" alt="">
+                            <h2 class="text_card">Phasmofobia</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/deadByDaylight.jpeg" alt="">
+                            <h2 class="text_card">Dead by Daylight</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/dayinglight2.jpeg" alt="">
+                            <h2 class="text_card">Daylight</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <!--card de compra -->
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/sonsoftheforest.jpeg" alt="">
+                            <h2 class="text_card">Son of the Forest</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">$3000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/residentEvit2.jpeg" alt="">
+                            <h2 class="text_card">Resident Evil 2</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">$3000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/dayz.jpeg" alt="">
+                            <h2 class="text_card">DayZ</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">Gratis</h3>
+                            <button class="btn_card">
+                                Jugar
+                                <div class="animation_btn_play"></div>
+                            </button>
+                        </div>
+
+                        <div class="card" id="card3">
+                            <img class="img_card" src="./images/residentEvil42.jpeg" alt="">
+                            <h2 class="text_card">Resident Evil 4</h2>
+                            <p class="text_card">Terror</p>
+                            <h3 class="text_card">$3000</h3>
+                            <button class="btn_card btn_card_compra">
+                                Comprar
+                                <img class="btn_compra_img" src="./images/Carrito_compras.png" alt="">
+                            </button>
+                        </div>
+
+                    </div>
+                </section>
+                <section class="contenedor_btn_carrucel">
+                    <div id="botonCarrouselIzq3" class="btn_carrucel btn_carrucel_izq">
+                        <div id="fechaIzq3" class="flecha_carrucel_izq"></div>
+                    </div>
+                    <div id="botonCarrouselDer3" class="btn_carrucel btn_carrucel_der">
+                        <div id="fechaDer3" class="flecha_carrucel_der"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        <footer class="listas"><img src="images/logo_gamelot.png" alt=""></footer>
+        <footer class="listas">
+            <ul>
+                <h3>Acerca de </h3>
+                <li>GAMELOT</li>
+                <li>Generos</li>
+                <li>Foro</li>
+            </ul>
+            <ul>
+                <h3>Contacto</h3>
+                <li>Instagram</li>
+                <li>Facebook</li>
+                <li>Whatsapp</li>
+                <li>Twitter</li>
+            </ul>
+            <ul>
+                <h3>Ayuda</h3>
+                <li>Compra</li>
+                <li>Asistencia</li>
+                <li>Contactos</li>
+                <li>Problemas</li>
+                
+            </ul>
+        </footer>
+        <footer class="listas"><p>© 2024 Copyright Gamelot. Todos los derechos reservados</p></footer>
+    </div>
+    <script src="./main/carrucel.js"></script>
+    <script src="./main/menuHamburguesa.js"></script>
+    <script src="./main/litadorDeTexto.js"></script>
+</body>
+
+</html>
