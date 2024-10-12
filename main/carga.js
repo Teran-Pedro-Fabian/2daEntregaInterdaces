@@ -12,6 +12,6 @@ let intervalo = setInterval(() => {
     }
 
     if (i == 12) {
-        window.location.href = "index.html"
+        window.location.href = "home.html"
     }
 }, 500); 
