@@ -1,6 +1,6 @@
 let maxcol
 let maxfil
-let condicionganar =3
+let condicionganar =2
 const j1 = 1;
 const j2 = 2;
 
@@ -27,7 +27,15 @@ let matriz = crearMatriz(4, 4)
 console.table(matriz);
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 /* SECCION DE PRUEVAS DE FUNCIONES */
-ganadorHorizontal(1, matriz ,condicionganar)
+console.log("horizontal")
+ganadorHorizontal(2, matriz ,condicionganar)
+console.log("vertical")
+ganadoVertical(2,matriz,condicionganar)
+console.log("diagonal decreciente2")
+ganadorDiagonalDecreciente(2,matriz,condicionganar)
+console.log("diagonal decreciente1")
+ganadorDiagonalDecreciente(1,matriz,condicionganar)
+
 
 
 
@@ -64,17 +72,17 @@ console.log(cuatroEnLinea); */
 
 
 /* busca el ganador que se le pase */
-function buscarganador(matriz, filAgregada, colAgregada, jugador, condicionganar){
-    if(ganadorHorizontal(maxcol, filAgregada,jugador, matriz, condicionganar)){
+function buscarganador(matriz, jugador, condicionganar){
+    if(ganadorHorizontal(jugador, matriz, condicionganar)){
         return jugador
     }
-    if(ganadorVertical(maxfil, colAgregada,jugador, matriz, condicionganar)){
+    if(ganadorVertical(jugador, matriz, condicionganar)){
         return jugador
     }
-    if(ganadorDiagonalCreciente(maxfil, colAgregada,filAgregada,jugador, matriz, condicionganar)){
+    if(ganadorDiagonalCreciente(jugador, matriz, condicionganar)){
         return jugador
     }
-    if(ganadorDiagonalDecreciente(maxfil, colAgregada,filAgregada,jugador, matriz, condicionganar)){
+    if(ganadorDiagonalDecreciente(jugador, matriz, condicionganar)){
         return jugador
     }
 
@@ -105,7 +113,7 @@ function ganadorHorizontal(jugador, matriz, condicionGanar) {
                 // Si se cumple la condición de ganar, retorna 1
                 if (contador === condicionGanar) {
                     console.log("¡Ganó!");
-                    return 1;
+                    return jugador;
                 }
             } else {
                 // Si el jugador no está en esta posición, reinicia el contador
@@ -124,6 +132,64 @@ function ganadorHorizontal(jugador, matriz, condicionGanar) {
 
 
 /* verifica si gana vertical */
-function ganadorVertical(maxfil, colAgregada,jugador, matriz, condicionganar){
+function ganadoVertical(jugador, matriz, condicionganar){
+    let contador = 0;
+    let estaSeguido = false;
 
+    // Calcula los límites de filas y columnas de la matriz
+    let maxfil = matriz.length;
+    let maxcol = matriz[0].length;
+
+    for (let col = 0; col < maxcol; col++) {
+        contador = 0; // Reinicia el contador para cada fila
+        estaSeguido = false;
+
+        for (let fil = 0; fil < maxfil; fil++) {
+            if (matriz[fil][col] === jugador) {
+                estaSeguido = true;
+                contador++;
+                
+                // Si se cumple la condición de ganar, retorna 1
+                if (contador === condicionganar) {
+                    console.log("¡Ganó!");
+                    return jugador;
+                }
+            } else {
+                // Si el jugador no está en esta posición, reinicia el contador
+                estaSeguido = false;
+                contador = 0;
+            }
+        }
+    }
+
+    return 0; // Retorna 0 si no hay ganador en ninguna columna
+}
+
+function ganadorDiagonalDecreciente(matriz, jugador, condicionGanar){
+
+        let maxfil = matriz.length;
+        let maxcol = matriz[0]?.length;
+    
+        for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
+            for (let col = 0; col <= maxcol - condicionGanar; col++) {
+                let contador = 0;
+    
+                // Verifica la diagonal creciente
+                for (let i = 0; i < condicionGanar; i++) {
+                    if (matriz[fil + i][col + i] === jugador) {
+                        contador++;
+                    } else {
+                        break; // Si encuentra un número diferente, rompe el bucle
+                    }
+                }
+    
+                // Si el contador alcanza la condición de ganar, retorna 1
+                if (contador === condicionGanar) {
+                    console.log("¡Ganó en diagonal creciente!");
+                    return 1;
+                }
+            }
+        }
+    
+        return 0; // Retorna 0 si no hay seguidilla en diagonal
 }
