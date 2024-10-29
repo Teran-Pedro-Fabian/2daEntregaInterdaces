@@ -6,22 +6,12 @@ const j2 = 2;
 let valorMinimo = 4;
 let cuatroEnLinea;
 
-for (let index = 0; index < maxcol; index++) {
-    // Crea un elemento HTML, por ejemplo, un div o un botón
-    let filaUno = document.createElement('div');
-    
-    // Asigna una clase o algún atributo si es necesario
-    filaUno.className = 'mi-clase'; // Opcional
+// Obtener el contexto del canvas
+const canvas = document.getElementById('miCanvas');
+const ctx = canvas.getContext('2d');
 
-    // Asigna un evento, por ejemplo, un click
-    filaUno.addEventListener('click', function() {
-        console.log('Elemento clicado en la columna: ' + index);
-        // Aquí puedes agregar la lógica que desees
-    });
 
-    // Agrega el elemento a la matriz o a otro contenedor en el DOM
-    cuatroEnLinea[0][index] = filaUno; // O a un contenedor específico
-}
+
 
 
 
@@ -29,14 +19,10 @@ function seteoDeTamanio(valor) {
     if (valor >= valorMinimo) {
         maxcol = valor;
         maxfil = valor;
+        // Crea la matriz con el nuevo tamaño
         cuatroEnLinea = new Array(maxcol).fill(0).map(() => new Array(maxfil).fill(0));
-        
-        // Actualiza las variables CSS para las dimensiones de la matriz
-        document.documentElement.style.setProperty('--num-col', maxcol);
-        document.documentElement.style.setProperty('--num-fil', maxfil);
     }
 }
-
 
 document.querySelector("#btnJugar").addEventListener("click", function() {
     seteoDeTamanio(4); // Define el tamaño de la matriz
@@ -289,4 +275,41 @@ function ganadorDiagonalCreciente(jugador,matriz,condicionGanar){
         }
     
         return 0; // Retorna 0 si no hay seguidilla en diagonal
+    }
+
+
+
+    class Ficha {
+        constructor(x, y, radio, imagenSrc) {
+            this.x = x; // Posición en el eje X
+            this.y = y; // Posición en el eje Y
+            this.radio = radio; // Radio de la ficha
+            this.imagen = new Image(); // Crear una nueva imagen
+            this.imagen.src = imagenSrc; // Ruta de la imagen
+        }
+    
+        // Método para dibujar la ficha en el canvas con imagen
+        dibujar(ctx) {
+            // Dibujar la imagen solo después de que se haya cargado
+            this.imagen.onload = () => {
+                // Crear un círculo de recorte
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.clip();
+    
+                // Dibujar la imagen dentro del área de recorte
+                ctx.drawImage(
+                    this.imagen,
+                    this.x - this.radio, // Coordenada x para que la imagen se centre en el círculo
+                    this.y - this.radio, // Coordenada y para que la imagen se centre en el círculo
+                    this.radio * 2,      // Ancho de la imagen en el círculo
+                    this.radio * 2       // Alto de la imagen en el círculo
+                );
+    
+                // Restaurar el contexto a su estado original
+                ctx.restore();
+            };
+        }
     }
