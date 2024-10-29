@@ -6,6 +6,25 @@ const j2 = 2;
 let valorMinimo = 4;
 let cuatroEnLinea;
 
+for (let index = 0; index < maxcol; index++) {
+    // Crea un elemento HTML, por ejemplo, un div o un botón
+    let filaUno = document.createElement('div');
+    
+    // Asigna una clase o algún atributo si es necesario
+    filaUno.className = 'mi-clase'; // Opcional
+
+    // Asigna un evento, por ejemplo, un click
+    filaUno.addEventListener('click', function() {
+        console.log('Elemento clicado en la columna: ' + index);
+        // Aquí puedes agregar la lógica que desees
+    });
+
+    // Agrega el elemento a la matriz o a otro contenedor en el DOM
+    cuatroEnLinea[0][index] = filaUno; // O a un contenedor específico
+}
+
+
+
 function seteoDeTamanio(valor) {
     if (valor >= valorMinimo) {
         maxcol = valor;
