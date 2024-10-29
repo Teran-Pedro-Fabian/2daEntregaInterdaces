@@ -3,7 +3,16 @@ let maxfil
 let condicionganar =3
 const j1 = 1;
 const j2 = 2;
+let valorMinimo = 4;
+let cuatroEnLinea
 
+function seteoDeTamanio(valor) {
+    if (valor >= valorMinimo) {
+        maxcol = valor;
+        maxfil = valor;
+        cuatroEnLinea = new Array(maxc).fill(0).map(() => new Array(maxf).fill(valorNulo));
+    }
+}
 function crearMatriz(valorC, valorF) {
     let columna = valorC;
     let fila = valorF;
@@ -11,7 +20,7 @@ function crearMatriz(valorC, valorF) {
     maxfil=valorF;
     /* let valorNulo =0; */
 
-    let cuatroEnLinea = new Array(fila);
+    cuatroEnLinea = new Array(fila);
     for (let i = 0; i < fila; i++) {
         cuatroEnLinea[i] = new Array(columna);
         for (let j = 0; j < columna; j++) {
