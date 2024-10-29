@@ -35,6 +35,7 @@ document.querySelector("#btnJugar").addEventListener("click", function() {
     seteoDeTamanio(4); // Define el tamaño de la matriz
     /*29-10 comentado para hacer todo dentro del canvas (y esto lo vuelve invisible, tenemos que laburar dentro del canvas)
      mostrarMatriz(); */
+    jugar()
 });
 
 /* function mostrarMatriz() {
@@ -56,7 +57,10 @@ document.querySelector("#btnJugar").addEventListener("click", function() {
 } */
 
 const jugar = () =>{
+    while(buscarganador()==0){
 
+    }
+    return;
 }
     // Inicializa la matriz para depuración y pruebas
 seteoDeTamanio(4);
@@ -84,11 +88,11 @@ let matriz = crearMatriz(4, 4)
 
 console.table(matriz);
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-/* SECCION DE PRUEVAS DE FUNCIONES */
+/* SECCION DE PRUEBAS DE FUNCIONES */
 console.log("horizontal")
 ganadorHorizontal(2, matriz ,condicionganar)
 console.log("vertical")
-ganadoVertical(2,matriz,condicionganar)
+ganadorVertical(2,matriz,condicionganar)
 console.log("diagonal decreciente")
 ganadorDiagonalDecreciente(2,matriz,condicionganar)
 console.log("diagonal creciente")
@@ -134,16 +138,20 @@ console.log(cuatroEnLinea); */
 
 /* busca el ganador que se le pase */
 function buscarganador(matriz, jugador, condicionganar){
-    if(ganadorHorizontal(jugador, matriz, condicionganar)){
+    if(ganadorHorizontal(jugador, matriz, condicionganar)!=0){
+        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
         return jugador
     }
-    if(ganadorVertical(jugador, matriz, condicionganar)){
+    if(ganadorVertical(jugador, matriz, condicionganar)!=0){
+        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
         return jugador
     }
-    if(ganadorDiagonalCreciente(jugador, matriz, condicionganar)){
+    if(ganadorDiagonalCreciente(jugador, matriz, condicionganar)!=0){
+        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
         return jugador
     }
-    if(ganadorDiagonalDecreciente(jugador, matriz, condicionganar)){
+    if(ganadorDiagonalDecreciente(jugador, matriz, condicionganar)!=0){
+        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
         return jugador
     }
     return 0
@@ -172,7 +180,7 @@ function ganadorHorizontal(jugador, matriz, condicionGanar) {
                 
                 // Si se cumple la condición de ganar, retorna 1
                 if (contador === condicionGanar) {
-                    console.log("¡Ganó!");
+                    console.log("¡Victoria!");
                     return jugador;
                 }
             } else {
@@ -191,7 +199,7 @@ function ganadorHorizontal(jugador, matriz, condicionGanar) {
 
 
 /* verifica si gana vertical */
-function ganadoVertical(jugador, matriz, condicionganar){
+function ganadorVertical(jugador, matriz, condicionganar){
     let contador = 0;
     let estaSeguido = false;
 
