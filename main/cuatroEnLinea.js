@@ -70,10 +70,10 @@ console.log("horizontal")
 ganadorHorizontal(2, matriz ,condicionganar)
 console.log("vertical")
 ganadoVertical(2,matriz,condicionganar)
-console.log("diagonal decreciente2")
+console.log("diagonal decreciente")
 ganadorDiagonalDecreciente(2,matriz,condicionganar)
-console.log("diagonal decreciente1")
-ganadorDiagonalDecreciente(1,matriz,condicionganar)
+console.log("diagonal creciente")
+ganadorDiagonalCreciente(2,matriz,condicionganar)
 
 
 
@@ -211,10 +211,10 @@ function ganadoVertical(jugador, matriz, condicionganar){
     return 0; // Retorna 0 si no hay ganador en ninguna columna
 }
 
-function ganadorDiagonalDecreciente(matriz, jugador, condicionGanar){
+function ganadorDiagonalDecreciente(jugador, matriz, condicionGanar){
 
         let maxfil = matriz.length;
-        let maxcol = matriz[0]?.length;
+        let maxcol = matriz[0].length;
     
         for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
             for (let col = 0; col <= maxcol - condicionGanar; col++) {
@@ -223,6 +223,34 @@ function ganadorDiagonalDecreciente(matriz, jugador, condicionGanar){
                 // Verifica la diagonal creciente
                 for (let i = 0; i < condicionGanar; i++) {
                     if (matriz[fil + i][col + i] === jugador) {
+                        contador++;
+                    } else {
+                        break; // Si encuentra un número diferente, rompe el bucle
+                    }
+                }
+                // Si el contador alcanza la condición de ganar, retorna 1
+                if (contador === condicionGanar) {
+                    console.log("¡Ganó en diagonal decreciente!");
+                    return 1;
+                }
+            }
+        }
+    
+        return 0; // Retorna 0 si no hay seguidilla en diagonal
+}
+
+
+function ganadorDiagonalCreciente(jugador,matriz,condicionGanar){
+        let maxfil = matriz.length;
+        let maxcol = matriz[0].length;
+    
+        for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
+            for (let col = condicionGanar - 1; col < maxcol; col++) {
+                let contador = 0;
+    
+                // Verifica la diagonal decreciente
+                for (let i = 0; i < condicionGanar; i++) {
+                    if (matriz[fil + i][col - i] === jugador) {
                         contador++;
                     } else {
                         break; // Si encuentra un número diferente, rompe el bucle
@@ -238,4 +266,4 @@ function ganadorDiagonalDecreciente(matriz, jugador, condicionGanar){
         }
     
         return 0; // Retorna 0 si no hay seguidilla en diagonal
-}
+    }
