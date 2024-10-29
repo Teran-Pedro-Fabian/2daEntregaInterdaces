@@ -36,21 +36,28 @@ ganadorHorizontal(1, matriz ,condicionganar)
 function recorrerFila() {
     for (let i = 0; i < matriz.length; i++) {
         moverEnHorizontal(matriz[i],j1,j2);
+        if(estaElJugador1(matriz,j1) && elemetoMatrizDiag(matriz, j1, j2)){
+            juega(matriz[i],j1);
+        }else{
+            juega(matriz[i], j2);
+        } 
     }
     
 }
-function moverEnHorizontal(matriz, j1, j2) {
-    for (let index = 0; index < matriz.length; index++) {
-        
-        if (matriz[index] == j1 || matriz[index] == j2 && noHayFichaDiagonal(matriz,j1,j2)) {
-
-            puedoColocarFicha(matriz, j1, j2);
+function juega(array, j1) {
+    array = j1;
+    
+}
+/* function elemetoMatrizDiag(matriz, j1,j2){
+    for (let index = 0; index < array.length; index++) {
+        for (let index2 = 0; index2 < array.length; index2++) {
+            if () {
+                
+            }
         }
         
     }
-}
-
-
+} */
 /* console.table(cuatroEnLinea);
 console.log(cuatroEnLinea); */
 
