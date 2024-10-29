@@ -54,25 +54,20 @@
 
         <section class="conteinerJuego">
             <div class="juego">
-                <button class="btn_card btnGame" id="btnJugar">
+                <canvas class="oculto" id="miCanvas"></canvas>
+                <button class="btn_card btnGame bloque" id="btnJugar">
                     jugar
                     <div class="animation_btn_play"></div>
                 </button>
-                <img class="imgJuego" src="./images/aaaa.jpg" alt="">
-            </div>
-            <div id="matrizContainer"></div> <!-- Contenedor para la matriz -->
-            
+            </div>            
             <div class="descripcion">
-                    <div class="descripcionTexto">
-                        <h2 class="textoDescripcion">4 en Linea</h2>
-                        <h3 class="textoDescripcion">Descripcion</h3>
-                        <p class="textoDescripcion">Capitán América, impulsado por el deber y la justicia, se enfrenta a Iron Man, que defiende la responsabilidad y el control. Sus ideales chocan en una épica batalla de fuerza, tecnología y determinación inquebrantable. </p>
-                            <h3 class="textoDescripcion">Como jugar</h3>
-                        <p class="textoDescripcion">Para jugar, forma tus estrategias eligiendo un héroe y utilizando sus habilidades especiales. Aprovecha el entorno y combina ataques para vencer a tu oponente mientras defiendes.</p>
-                    </div>
-
-
-                
+                <div class="descripcionTexto">
+                    <h2 class="textoDescripcion">4 en Linea</h2>
+                    <h3 class="textoDescripcion">Descripcion</h3>
+                    <p class="textoDescripcion">Capitán América, impulsado por el deber y la justicia, se enfrenta a Iron Man, que defiende la responsabilidad y el control. Sus ideales chocan en una épica batalla de fuerza, tecnología y determinación inquebrantable. </p>
+                    <h3 class="textoDescripcion">Como jugar</h3>
+                    <p class="textoDescripcion">Para jugar, forma tus estrategias eligiendo un héroe y utilizando sus habilidades especiales. Aprovecha el entorno y combina ataques para vencer a tu oponente mientras defiendes.</p>
+                </div>                
                 <div class="descripcionTexto">
                     <ul class="listaJuego">
                         <li class="liJuegoInstruccion">
@@ -87,8 +82,7 @@
                             <img class="imagenCompartirJuego" src="./images/flechaDerecha.png" alt="">
                             <p>Derecha</p>
                         </li>
-                    </ul>
-    
+                    </ul>    
                 </div>
                 <div class="listaJuego">
                     <div><p class="textoDescripcion">Compartir</p></div>
@@ -152,7 +146,6 @@
     <footer class="listas"><p>© 2024 Copyright Gamelot. Todos los derechos reservados</p></footer>
 
 </div>
-<script src="./main/carrucel.js"></script>
 <script src="./main/menuHamburguesa.js"></script>
 <script src="main/cuatroEnLinea.js"></script>
 </body>

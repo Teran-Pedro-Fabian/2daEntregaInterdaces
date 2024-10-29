@@ -150,11 +150,7 @@ img {
     align-items: center;
     justify-content: center;
     width: 100%;
-}
-
-.imgJuego {
-    width: 100%;
-    height: 90vh;
+    background-image: url("../images/aaaa.jpg");
 }
 
 section div button.btnGame{
@@ -1039,7 +1035,8 @@ footer img{
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 70%;
+            width: 80%;
+            background-image: url("../images/aaaa.jpg");
         }
 
         .imgJuego{
@@ -1413,6 +1410,10 @@ footer img{
             background-color: var(--1ro-400);
             width: 16%;
         }
+    }
+
+    .bloque {
+        display: block;
     }
 
     .oculto {

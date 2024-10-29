@@ -6,14 +6,21 @@ const j2 = 2;
 let valorMinimo = 4;
 let cuatroEnLinea;
 
+//escuchar al botoncito para cargar el canvas
+const miCanvas = document.getElementById('miCanvas')
+console.log(`El canvas es ${miCanvas}`)
+let inicio = document.querySelector('#btnJugar')
+//acá se lanza el juego:
+inicio.addEventListener("click", ()=>{
+    inicio.classList.remove('bloque')
+    inicio.classList.add('oculto')
+    miCanvas.classList.remove('oculto')
+    miCanvas.classList.add('bloque')
+    jugar()
+})
+
 // Obtener el contexto del canvas
-const canvas = document.getElementById('miCanvas');
-const ctx = canvas.getContext('2d');
-
-
-
-
-
+const ctx = miCanvas.getContext('2d');
 
 function seteoDeTamanio(valor) {
     if (valor >= valorMinimo) {
@@ -26,10 +33,11 @@ function seteoDeTamanio(valor) {
 
 document.querySelector("#btnJugar").addEventListener("click", function() {
     seteoDeTamanio(4); // Define el tamaño de la matriz
-    mostrarMatriz();
+    /*29-10 comentado para hacer todo dentro del canvas (y esto lo vuelve invisible, tenemos que laburar dentro del canvas)
+     mostrarMatriz(); */
 });
 
-function mostrarMatriz() {
+/* function mostrarMatriz() {
     const matrizContainer = document.getElementById("matrizContainer");
     matrizContainer.innerHTML = ""; // Limpia el contenedor antes de mostrar la matriz
 
@@ -45,12 +53,14 @@ function mostrarMatriz() {
         matrizContainer.appendChild(fila); // Añade la fila al contenedor de la matriz
     }
     document.querySelector(".juego").classList.add("oculto");
-}
+} */
 
-// Inicializa la matriz para depuración y pruebas
+const jugar = () =>{
+
+}
+    // Inicializa la matriz para depuración y pruebas
 seteoDeTamanio(4);
 console.table(cuatroEnLinea);
-
 
 function crearMatriz(valorC, valorF) {
     let columna = valorC;
@@ -83,10 +93,6 @@ console.log("diagonal decreciente")
 ganadorDiagonalDecreciente(2,matriz,condicionganar)
 console.log("diagonal creciente")
 ganadorDiagonalCreciente(2,matriz,condicionganar)
-
-
-
-
 
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 function recorrerFila() {
@@ -140,7 +146,6 @@ function buscarganador(matriz, jugador, condicionganar){
     if(ganadorDiagonalDecreciente(jugador, matriz, condicionganar)){
         return jugador
     }
-
     return 0
 }
 
@@ -177,7 +182,6 @@ function ganadorHorizontal(jugador, matriz, condicionGanar) {
             }
         }
     }
-
     return 0; // Retorna 0 si no hay ganador en ninguna fila
 }
 
