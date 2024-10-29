@@ -4,7 +4,7 @@ let condicionganar =3
 const j1 = 1;
 const j2 = 2;
 let valorMinimo = 4;
-let cuatroEnLinea
+let cuatroEnLinea;
 
 function seteoDeTamanio(valor) {
     if (valor >= valorMinimo) {
