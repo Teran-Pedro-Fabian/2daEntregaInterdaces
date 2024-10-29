@@ -10,10 +10,14 @@ function seteoDeTamanio(valor) {
     if (valor >= valorMinimo) {
         maxcol = valor;
         maxfil = valor;
-        // Crea la matriz con el nuevo tamaño
         cuatroEnLinea = new Array(maxcol).fill(0).map(() => new Array(maxfil).fill(0));
+        
+        // Actualiza las variables CSS para las dimensiones de la matriz
+        document.documentElement.style.setProperty('--num-col', maxcol);
+        document.documentElement.style.setProperty('--num-fil', maxfil);
     }
 }
+
 
 document.querySelector("#btnJugar").addEventListener("click", function() {
     seteoDeTamanio(4); // Define el tamaño de la matriz
