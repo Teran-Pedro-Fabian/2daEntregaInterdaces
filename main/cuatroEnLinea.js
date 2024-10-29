@@ -1,6 +1,6 @@
-let maxcol
-let maxfil
-let condicionganar =3
+let maxcol;
+let maxfil;
+let condicionganar = 3;
 const j1 = 1;
 const j2 = 2;
 let valorMinimo = 4;
@@ -10,9 +10,39 @@ function seteoDeTamanio(valor) {
     if (valor >= valorMinimo) {
         maxcol = valor;
         maxfil = valor;
-        cuatroEnLinea = new Array(maxc).fill(0).map(() => new Array(maxf).fill(valorNulo));
+        // Crea la matriz con el nuevo tamaño
+        cuatroEnLinea = new Array(maxcol).fill(0).map(() => new Array(maxfil).fill(0));
     }
 }
+
+document.querySelector("#btnJugar").addEventListener("click", function() {
+    seteoDeTamanio(4); // Define el tamaño de la matriz
+    mostrarMatriz();
+});
+
+function mostrarMatriz() {
+    const matrizContainer = document.getElementById("matrizContainer");
+    matrizContainer.innerHTML = ""; // Limpia el contenedor antes de mostrar la matriz
+
+    for (let i = 0; i < maxfil; i++) {
+        let fila = document.createElement("div"); // Crea un nuevo div para cada fila
+        fila.className = "fila"; // Clase para estilo
+        for (let j = 0; j < maxcol; j++) {
+            let celda = document.createElement("div"); // Crea un nuevo div para cada celda
+            celda.className = "celda"; // Clase para estilo
+            celda.textContent = cuatroEnLinea[i][j]; // Añade el valor de la matriz
+            fila.appendChild(celda); // Añade la celda a la fila
+        }
+        matrizContainer.appendChild(fila); // Añade la fila al contenedor de la matriz
+    }
+    document.querySelector(".juego").classList.add("oculto");
+}
+
+// Inicializa la matriz para depuración y pruebas
+seteoDeTamanio(4);
+console.table(cuatroEnLinea);
+
+
 function crearMatriz(valorC, valorF) {
     let columna = valorC;
     let fila = valorF;
