@@ -1765,22 +1765,26 @@ footer img{
     #matrizContainer {
         display: flex;
         flex-direction: column;
-        margin: 20px auto 0 auto; /* Centra horizontalmente */
+        margin: 20px auto 20px auto; /* Centra horizontalmente */
         width: max-content; /* Ajusta el ancho al contenido */
+        max-width: 600px; /* Tamaño máximo del contenedor */
+        max-height: 600px; /* Tamaño máximo del contenedor */
+
     }
-    
+
     .fila {
         display: flex;
     }
     
     .celda {
-        width: 180px;
-        height: 180px;
+        width: calc(600px / var(--num-col)); /* Ajusta el tamaño basado en el número de columnas */
+        height: calc(600px / var(--num-fil)); /* Ajusta el tamaño basado en el número de filas */
         border: 1px solid #000;
         display: flex;
         align-items: center;
         justify-content: center;
     }
+    
     
     
 }
