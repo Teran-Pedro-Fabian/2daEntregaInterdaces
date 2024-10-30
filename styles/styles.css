@@ -1766,10 +1766,10 @@ footer img{
     #matrizContainer {
         display: flex;
         flex-direction: column;
-        margin: 20px auto 20px auto; /* Centra horizontalmente */
-        width: max-content; /* Ajusta el ancho al contenido */
-        max-width: 600px; /* Tamaño máximo del contenedor */
-        max-height: 600px; /* Tamaño máximo del contenedor */
+        margin: 20px auto 20px auto; 
+        width: max-content; 
+        max-width: 600px; 
+        max-height: 600px; 
 
     }
 
@@ -1778,14 +1778,15 @@ footer img{
     }
     
     .celda {
-        width: calc(600px / var(--num-col)); /* Ajusta el tamaño basado en el número de columnas */
-        height: calc(600px / var(--num-fil)); /* Ajusta el tamaño basado en el número de filas */
+        width: calc(600px / var(--num-col)); 
+        height: calc(600px / var(--num-fil)); 
         border: 1px solid #000;
         display: flex;
         align-items: center;
         justify-content: center;
     }
     
+
     
     
 }

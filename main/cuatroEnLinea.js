@@ -68,9 +68,10 @@ function mostrarMatriz() {
     }
     document.querySelector(".juego").classList.add("oculto");
 } */
-
-const jugar = (n) => {
-  const fichasj1 = new Ficha[n]()
+/* x, y, radio, imagenSrc */
+const jugar = () => {
+    /*  jugador, condicionganar */
+  const fichasj1 = new Ficha(20,10,50,"./images/aaaa.jpg" );
   let turnoj2 = false;
   while (buscarganador() == 0) {}
   return;
