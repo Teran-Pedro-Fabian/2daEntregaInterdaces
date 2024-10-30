@@ -1,3 +1,143 @@
+class Ficha {
+  constructor(x, y, radio, imagenSrc) {
+    this.x = x; // Posición en el eje X
+    this.y = y; // Posición en el eje Y
+    //0=listo, 1=clickeado, 2=colocado en columna, 3=cayendo, 4=final(quieto e inamovible). lo puse como entero para que no sea ambiguo (si me escribís cAyEnDO ya no es == a cayendo)
+    this.estado = 0
+    this.radio = radio; // Radio de la ficha
+    this.imagen = new Image(); // Crear una nueva imagen
+    this.imagen.src = imagenSrc; // Ruta de la imagen
+  }
+  setEstado(nuevoEstado){
+    this.estado = nuevoEstado
+  }
+  setX(nuevoX){
+    this.x = nuevoX
+  }
+  setY(nuevoY){
+    this.y = nuevoY
+  }
+  //estado1: pegarme al mouse
+  pin(e){
+    this.setX(e.offsetX)
+    this.setY(e.offsetY)
+    console.log('(',this.x,',', this.y,')')
+  }
+  // Método para dibujar la ficha en el canvas con imagen
+  dibujar(ctx) {
+    // Dibujar la imagen solo después de que se haya cargado
+    this.imagen.onload = () => {
+      // Crear un círculo de recorte
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+
+      // Dibujar la imagen dentro del área de recorte
+      ctx.drawImage(
+        this.imagen,
+        this.x - this.radio, // Coordenada x para que la imagen se centre en el círculo
+        this.y - this.radio, // Coordenada y para que la imagen se centre en el círculo
+        this.radio * 2, // Ancho de la imagen en el círculo
+        this.radio * 2 // Alto de la imagen en el círculo
+      );
+
+      // Restaurar el contexto a su estado original
+      ctx.restore();
+    };
+  }
+}
+
+class Juego{
+  //elementoDOM se usa para hacer referencia al canvas, lo vamos a llamar más tarde. X e Y se determinan cuando se decide de cuántas fichas en línea se trata
+  constructor(elementoDOM, filasDesignadas, colDesignadas, img1, img2){
+    this.filas = filasDesignadas
+    this.columnas = colDesignadas
+    //necesitamos saber quién va
+    this.turno = 1
+    this.tablero = document.querySelector(elementoDOM)
+    //si alguien gana, jugando se vuelve false (y nuestra función que revisa quién ganó mostrará quién ganó)
+    this.jugando = true
+    //si alguien jugó, lo disparamos desde la función "jugar" y llamamos a un callback para que sea orientado a eventos
+    this.onAlguienJuega = () =>{
+      this.actualizarInfoJugador()
+    }
+    //el juego tiene sus imágenes y esto lo vuelve mantenible y escalable
+    this.imagenesJugadores = {
+      1: [
+        `../images/imagenesParaFichas/capitanAmericaFicha1.jpg`,
+        `../images/imagenesParaFichas/capitanAmericaFicha2.jpg`,
+        `../images/imagenesParaFichas/capitanAmericaFicha3.jpg`,
+        `../images/imagenesParaFichas/capitanAmericaFicha4.jpg`
+      ],
+      2: [
+        `../images/imagenesParaFichas/ironManFicha1.jpg`,
+        `../images/imagenesParaFichas/ironManFicha2.jpg`,
+        `../images/imagenesParaFichas/ironManFicha3.jpg`,
+        `../images/imagenesParaFichas/ironManFicha4.jpg`
+      ]
+    }
+    this.imagenesElegidas= {
+        jug1: img1,
+        jug2: img2
+    }
+  }
+
+  actualizarInfoJugador(){
+    const jug1 = document.querySelector(".jug1")
+    const jug2 = document.querySelector(".jug2")
+    if(this.turno === 1){
+      jug1.classList.add("activo")
+      jug2.classList.remove("activo")
+    } else {
+      jug2.classList.add("activo")
+      jug1.classList.remove("activo")
+    }
+  }
+  //SETUP
+  //configuro que clickeen en distintas zonas del canvas
+  configEntradas(){
+    let resetButton = document.querySelector("#reset")
+    resetButton.addEventListener()
+  }
+
+  //crea un arreglo 2d en el que vamos a ir guardando las fichas. 0 es vacio, 1 es jug1, 2 es jug2
+  crearGrid(){
+    const $tablero = document.querySelector(this.selector)
+    $tablero.innerHTML = ""
+    this.grid = []
+
+    for(let col = 0; col < this.columnas; col++){
+      for(let fila = 0; fila < this.filas; fila++){
+        this.grid[columna, fila] = 0
+      }
+    }
+  }
+
+  //DIBUJO
+  //dibujo ficha en el x,y especificado
+  dibujarFicha(x,y,imagen){
+    ctx.drawImage(imagen, x-(img.width/2), y-(img.height/2))
+  }
+
+
+  //reviso si ya gané
+  chequearVictoria(col, fila){
+    return(
+      this.chequearEnDireccion(col, fila, 0, 1) || //aumentá para la derecha
+      this.chequearEnDireccion(col, fila, 1, 0) || //" " abajo
+      this.chequearEnDireccion(col, fila, 1, 1) || //" " derecha, abajo (diagonal descendiente)
+      this.chequearEnDireccion(col, fila, 1, 1)  //" " derecha, arriba (diagonal ascendiente)
+    )
+  }
+
+  chequearEnDireccion(col, fila, varH, varV, accum){
+    if (accum == 4) return true
+    if (this.grid[col][fila] == this.turno) return this.chequearEnDireccion(col+varH, fila+varV, varH, varV)
+  } 
+}
+
 let maxcol;
 let maxfil;
 let condicionganar = 3;
@@ -38,138 +178,9 @@ function seteoDeTamanio(valor) {
   }
 }
 
-/* 
-comento código redundante (tenemos 2 event listener para #btnJugar)
-document.querySelector("#btnJugar").addEventListener("click", function() {
-    seteoDeTamanio(4); // Define el tamaño de la matriz
-
-    /* comentado para hacer todo dentro del canvas (y esto lo vuelve invisible, tenemos que laburar dentro del canvas)
-     mostrarMatriz(); 
-
-    jugar()
-}); */
-
-/* 
-/esta era de prueba, para ver si la podíamos implementar vía consola, comentada para desarrollar algo con el canvas
-function mostrarMatriz() {
-    const matrizContainer = document.getElementById("matrizContainer");
-    matrizContainer.innerHTML = ""; // Limpia el contenedor antes de mostrar la matriz
-
-    for (let i = 0; i < maxfil; i++) {
-        let fila = document.createElement("div"); // Crea un nuevo div para cada fila
-        fila.className = "fila"; // Clase para estilo
-        for (let j = 0; j < maxcol; j++) {
-            let celda = document.createElement("div"); // Crea un nuevo div para cada celda
-            celda.className = "celda"; // Clase para estilo
-            celda.textContent = cuatroEnLinea[i][j]; // Añade el valor de la matriz
-            fila.appendChild(celda); // Añade la celda a la fila
-        }
-        matrizContainer.appendChild(fila); // Añade la fila al contenedor de la matriz
-    }
-    document.querySelector(".juego").classList.add("oculto");
-} */
-/* x, y, radio, imagenSrc */
-const jugar = () => {
-    /*  jugador, condicionganar */
-  const fichasj1 = new Ficha(20,10,50,"./images/aaaa.jpg" );
-  let turnoj2 = false;
-  while (buscarganador() == 0) {}
-  return;
-};
 // Inicializa la matriz para depuración y pruebas
 seteoDeTamanio(4);
 console.table(cuatroEnLinea);
-
-function crearMatriz(valorC, valorF) {
-  let columna = valorC;
-  let fila = valorF;
-  maxcol = valorC;
-  maxfil = valorF;
-  /* let valorNulo =0; */
-
-  cuatroEnLinea = new Array(fila);
-  for (let i = 0; i < fila; i++) {
-    cuatroEnLinea[i] = new Array(columna);
-    for (let j = 0; j < columna; j++) {
-      // Genera un número aleatorio entre 0 y 2 y lo asigna a la celda actual
-      cuatroEnLinea[i][j] = Math.floor(Math.random() * 3);
-    }
-  }
-
-  return cuatroEnLinea;
-}
-let matriz = crearMatriz(4, 4);
-
-console.table(matriz);
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-/* SECCION DE PRUEBAS DE FUNCIONES */
-console.log("horizontal");
-ganadorHorizontal(2, matriz, condicionganar);
-console.log("vertical");
-ganadorVertical(2, matriz, condicionganar);
-console.log("diagonal decreciente");
-ganadorDiagonalDecreciente(2, matriz, condicionganar);
-console.log("diagonal creciente");
-ganadorDiagonalCreciente(2, matriz, condicionganar);
-
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-function recorrerFila() {
-  for (let i = 0; i < matriz.length; i++) {
-    moverEnHorizontal(matriz[i], j1, j2);
-    if (estaElJugador1(matriz, j1) && elemetoMatrizDiag(matriz, j1, j2)) {
-      juega(matriz[i], j1);
-    } else {
-      juega(matriz[i], j2);
-    }
-  }
-}
-function juega(array, j1) {
-  array = j1;
-}
-/* function elemetoMatrizDiag(matriz, j1,j2){
-    for (let index = 0; index < array.length; index++) {
-        for (let index2 = 0; index2 < array.length; index2++) {
-            if () {
-                
-            }
-        }
-        
-    }
-} */
-/* console.table(cuatroEnLinea);
-console.log(cuatroEnLinea); */
-
-/* verificacion de ganador */ ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* busca el ganador que se le pase */
-function buscarganador(matriz, jugador, condicionganar) {
-  if (ganadorHorizontal(jugador, matriz, condicionganar) != 0) {
-    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
-    return jugador;
-  }
-  if (ganadorVertical(jugador, matriz, condicionganar) != 0) {
-    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
-    return jugador;
-  }
-  if (ganadorDiagonalCreciente(jugador, matriz, condicionganar) != 0) {
-    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
-    return jugador;
-  }
-  if (ganadorDiagonalDecreciente(jugador, matriz, condicionganar) != 0) {
-    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
-    return jugador;
-  }
-  return 0;
-}
-
-/* verifica si gana horizontal, chequea todas las filas */
-function ganadorHorizontal(jugador, matriz, condicionGanar) {
-  let contador = 0;
-  let estaSeguido = false;
-
-  // Calcula los límites de filas y columnas de la matriz
-  let maxfil = matriz.length;
-  let maxcol = matriz[0].length;
 
   for (let fil = 0; fil < maxfil; fil++) {
     contador = 0; // Reinicia el contador para cada fila
@@ -193,7 +204,7 @@ function ganadorHorizontal(jugador, matriz, condicionGanar) {
     }
   }
   return 0; // Retorna 0 si no hay ganador en ninguna fila
-}
+
 
 /* verifica si gana vertical */
 function ganadorVertical(jugador, matriz, condicionganar) {
@@ -284,53 +295,3 @@ function ganadorDiagonalCreciente(jugador, matriz, condicionGanar) {
   return 0; // Retorna 0 si no hay seguidilla en diagonal
 }
 
-class Ficha {
-  constructor(x, y, radio, imagenSrc) {
-    this.x = x; // Posición en el eje X
-    this.y = y; // Posición en el eje Y
-    //0=listo, 1=clickeado, 2=colocado en columna, 3=cayendo, 4=final(quieto e inamovible). lo puse como entero para que no sea ambiguo (si me escribís cAyEnDO ya no es == a cayendo)
-    this.estado = 0
-    this.radio = radio; // Radio de la ficha
-    this.imagen = new Image(); // Crear una nueva imagen
-    this.imagen.src = imagenSrc; // Ruta de la imagen
-  }
-  setEstado(nuevoEstado){
-    this.estado = nuevoEstado
-  }
-  setX(nuevoX){
-    this.x = nuevoX
-  }
-  setY(nuevoY){
-    this.y = nuevoY
-  }
-  //estado1: pegarme al mouse
-  pin(e){
-    this.setX(e.offsetX)
-    this.setY(e.offsetY)
-    console.log('(',this.x,',', this.y,')')
-  }
-  // Método para dibujar la ficha en el canvas con imagen
-  dibujar(ctx) {
-    // Dibujar la imagen solo después de que se haya cargado
-    this.imagen.onload = () => {
-      // Crear un círculo de recorte
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-
-      // Dibujar la imagen dentro del área de recorte
-      ctx.drawImage(
-        this.imagen,
-        this.x - this.radio, // Coordenada x para que la imagen se centre en el círculo
-        this.y - this.radio, // Coordenada y para que la imagen se centre en el círculo
-        this.radio * 2, // Ancho de la imagen en el círculo
-        this.radio * 2 // Alto de la imagen en el círculo
-      );
-
-      // Restaurar el contexto a su estado original
-      ctx.restore();
-    };
-  }
-}
