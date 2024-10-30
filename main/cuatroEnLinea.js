@@ -1,44 +1,57 @@
-let maxcol
-let maxfil
-let condicionganar =3
+let maxcol;
+let maxfil;
+let condicionganar = 3;
 const j1 = 1;
 const j2 = 2;
 let valorMinimo = 4;
 let cuatroEnLinea;
 
 //escuchar al botoncito para cargar el canvas
-const miCanvas = document.getElementById('miCanvas')
-console.log(`El canvas es ${miCanvas}`)
-let inicio = document.querySelector('#btnJugar')
+const miCanvas = document.getElementById("miCanvas");
+console.log(`El canvas es ${miCanvas}`);
+let inicio = document.querySelector("#btnJugar");
 //acá se lanza el juego:
-inicio.addEventListener("click", ()=>{
-    inicio.classList.remove('bloque')
-    inicio.classList.add('oculto')
-    miCanvas.classList.remove('oculto')
-    miCanvas.classList.add('bloque')
-    jugar()
-})
-
-// Obtener el contexto del canvas
-const ctx = miCanvas.getContext('2d');
-
-function seteoDeTamanio(valor) {
-    if (valor >= valorMinimo) {
-        maxcol = valor;
-        maxfil = valor;
-        // Crea la matriz con el nuevo tamaño
-        cuatroEnLinea = new Array(maxcol).fill(0).map(() => new Array(maxfil).fill(0));
-    }
-}
-
-document.querySelector("#btnJugar").addEventListener("click", function() {
-    seteoDeTamanio(4); // Define el tamaño de la matriz
-    /*29-10 comentado para hacer todo dentro del canvas (y esto lo vuelve invisible, tenemos que laburar dentro del canvas)
-     mostrarMatriz(); */
-    jugar()
+inicio.addEventListener("click", () => {
+  inicio.classList.remove("bloque");
+  inicio.classList.add("oculto");
+  miCanvas.classList.remove("oculto");
+  miCanvas.classList.add("bloque");
+  jugar();
 });
 
-/* function mostrarMatriz() {
+// Obtener el contexto del canvas
+const ctx = miCanvas.getContext("2d");
+
+// Acá dibuja la pantalla. Estimo que vamos a darle algo como 30 FPS así que dentro de jugar(), un interval va a llamar a drawScreen 30 veces por segundo
+const drawScreen = () => {
+
+};
+
+function seteoDeTamanio(valor) {
+  if (valor >= valorMinimo) {
+    maxcol = valor;
+    maxfil = valor;
+    // Crea la matriz con el nuevo tamaño
+    cuatroEnLinea = new Array(maxcol)
+      .fill(0)
+      .map(() => new Array(maxfil).fill(0));
+  }
+}
+
+/* 
+comento código redundante (tenemos 2 event listener para #btnJugar)
+document.querySelector("#btnJugar").addEventListener("click", function() {
+    seteoDeTamanio(4); // Define el tamaño de la matriz
+
+    /* comentado para hacer todo dentro del canvas (y esto lo vuelve invisible, tenemos que laburar dentro del canvas)
+     mostrarMatriz(); 
+
+    jugar()
+}); */
+
+/* 
+/esta era de prueba, para ver si la podíamos implementar vía consola, comentada para desarrollar algo con el canvas
+function mostrarMatriz() {
     const matrizContainer = document.getElementById("matrizContainer");
     matrizContainer.innerHTML = ""; // Limpia el contenedor antes de mostrar la matriz
 
@@ -56,63 +69,61 @@ document.querySelector("#btnJugar").addEventListener("click", function() {
     document.querySelector(".juego").classList.add("oculto");
 } */
 
-const jugar = () =>{
-    while(buscarganador()==0){
-
-    }
-    return;
-}
-    // Inicializa la matriz para depuración y pruebas
+const jugar = (n) => {
+  const fichasj1 = new Ficha[n]()
+  let turnoj2 = false;
+  while (buscarganador() == 0) {}
+  return;
+};
+// Inicializa la matriz para depuración y pruebas
 seteoDeTamanio(4);
 console.table(cuatroEnLinea);
 
 function crearMatriz(valorC, valorF) {
-    let columna = valorC;
-    let fila = valorF;
-    maxcol=valorC;
-    maxfil=valorF;
-    /* let valorNulo =0; */
+  let columna = valorC;
+  let fila = valorF;
+  maxcol = valorC;
+  maxfil = valorF;
+  /* let valorNulo =0; */
 
-    cuatroEnLinea = new Array(fila);
-    for (let i = 0; i < fila; i++) {
-        cuatroEnLinea[i] = new Array(columna);
-        for (let j = 0; j < columna; j++) {
-            // Genera un número aleatorio entre 0 y 2 y lo asigna a la celda actual
-            cuatroEnLinea[i][j] = Math.floor(Math.random() * 3);
-        }
+  cuatroEnLinea = new Array(fila);
+  for (let i = 0; i < fila; i++) {
+    cuatroEnLinea[i] = new Array(columna);
+    for (let j = 0; j < columna; j++) {
+      // Genera un número aleatorio entre 0 y 2 y lo asigna a la celda actual
+      cuatroEnLinea[i][j] = Math.floor(Math.random() * 3);
     }
+  }
 
-    return cuatroEnLinea;
+  return cuatroEnLinea;
 }
-let matriz = crearMatriz(4, 4)
+let matriz = crearMatriz(4, 4);
 
 console.table(matriz);
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 /* SECCION DE PRUEBAS DE FUNCIONES */
-console.log("horizontal")
-ganadorHorizontal(2, matriz ,condicionganar)
-console.log("vertical")
-ganadorVertical(2,matriz,condicionganar)
-console.log("diagonal decreciente")
-ganadorDiagonalDecreciente(2,matriz,condicionganar)
-console.log("diagonal creciente")
-ganadorDiagonalCreciente(2,matriz,condicionganar)
+console.log("horizontal");
+ganadorHorizontal(2, matriz, condicionganar);
+console.log("vertical");
+ganadorVertical(2, matriz, condicionganar);
+console.log("diagonal decreciente");
+ganadorDiagonalDecreciente(2, matriz, condicionganar);
+console.log("diagonal creciente");
+ganadorDiagonalCreciente(2, matriz, condicionganar);
 
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 function recorrerFila() {
-    for (let i = 0; i < matriz.length; i++) {
-        moverEnHorizontal(matriz[i],j1,j2);
-        if(estaElJugador1(matriz,j1) && elemetoMatrizDiag(matriz, j1, j2)){
-            juega(matriz[i],j1);
-        }else{
-            juega(matriz[i], j2);
-        } 
+  for (let i = 0; i < matriz.length; i++) {
+    moverEnHorizontal(matriz[i], j1, j2);
+    if (estaElJugador1(matriz, j1) && elemetoMatrizDiag(matriz, j1, j2)) {
+      juega(matriz[i], j1);
+    } else {
+      juega(matriz[i], j2);
     }
-    
+  }
 }
 function juega(array, j1) {
-    array = j1;
-    
+  array = j1;
 }
 /* function elemetoMatrizDiag(matriz, j1,j2){
     for (let index = 0; index < array.length; index++) {
@@ -127,201 +138,198 @@ function juega(array, j1) {
 /* console.table(cuatroEnLinea);
 console.log(cuatroEnLinea); */
 
-
-
-
-
-
-
-/* verificacion de ganador */////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/* verificacion de ganador */ ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* busca el ganador que se le pase */
-function buscarganador(matriz, jugador, condicionganar){
-    if(ganadorHorizontal(jugador, matriz, condicionganar)!=0){
-        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
-        return jugador
-    }
-    if(ganadorVertical(jugador, matriz, condicionganar)!=0){
-        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
-        return jugador
-    }
-    if(ganadorDiagonalCreciente(jugador, matriz, condicionganar)!=0){
-        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
-        return jugador
-    }
-    if(ganadorDiagonalDecreciente(jugador, matriz, condicionganar)!=0){
-        console.log("Ganó ",jugador==1?"el capitán América!":"Iron Man")
-        return jugador
-    }
-    return 0
+function buscarganador(matriz, jugador, condicionganar) {
+  if (ganadorHorizontal(jugador, matriz, condicionganar) != 0) {
+    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
+    return jugador;
+  }
+  if (ganadorVertical(jugador, matriz, condicionganar) != 0) {
+    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
+    return jugador;
+  }
+  if (ganadorDiagonalCreciente(jugador, matriz, condicionganar) != 0) {
+    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
+    return jugador;
+  }
+  if (ganadorDiagonalDecreciente(jugador, matriz, condicionganar) != 0) {
+    console.log("Ganó ", jugador == 1 ? "el capitán América!" : "Iron Man");
+    return jugador;
+  }
+  return 0;
 }
-
-
-
 
 /* verifica si gana horizontal, chequea todas las filas */
 function ganadorHorizontal(jugador, matriz, condicionGanar) {
-    let contador = 0;
-    let estaSeguido = false;
+  let contador = 0;
+  let estaSeguido = false;
 
-    // Calcula los límites de filas y columnas de la matriz
-    let maxfil = matriz.length;
-    let maxcol = matriz[0].length;
+  // Calcula los límites de filas y columnas de la matriz
+  let maxfil = matriz.length;
+  let maxcol = matriz[0].length;
 
-    for (let fil = 0; fil < maxfil; fil++) {
-        contador = 0; // Reinicia el contador para cada fila
-        estaSeguido = false;
-
-        for (let col = 0; col < maxcol; col++) {
-            if (matriz[fil][col] === jugador) {
-                estaSeguido = true;
-                contador++;
-                
-                // Si se cumple la condición de ganar, retorna 1
-                if (contador === condicionGanar) {
-                    console.log("¡Victoria!");
-                    return jugador;
-                }
-            } else {
-                // Si el jugador no está en esta posición, reinicia el contador
-                estaSeguido = false;
-                contador = 0;
-            }
-        }
-    }
-    return 0; // Retorna 0 si no hay ganador en ninguna fila
-}
-
-
-
-
-
-
-/* verifica si gana vertical */
-function ganadorVertical(jugador, matriz, condicionganar){
-    let contador = 0;
-    let estaSeguido = false;
-
-    // Calcula los límites de filas y columnas de la matriz
-    let maxfil = matriz.length;
-    let maxcol = matriz[0].length;
+  for (let fil = 0; fil < maxfil; fil++) {
+    contador = 0; // Reinicia el contador para cada fila
+    estaSeguido = false;
 
     for (let col = 0; col < maxcol; col++) {
-        contador = 0; // Reinicia el contador para cada fila
+      if (matriz[fil][col] === jugador) {
+        estaSeguido = true;
+        contador++;
+
+        // Si se cumple la condición de ganar, retorna 1
+        if (contador === condicionGanar) {
+          console.log("¡Victoria!");
+          return jugador;
+        }
+      } else {
+        // Si el jugador no está en esta posición, reinicia el contador
         estaSeguido = false;
-
-        for (let fil = 0; fil < maxfil; fil++) {
-            if (matriz[fil][col] === jugador) {
-                estaSeguido = true;
-                contador++;
-                
-                // Si se cumple la condición de ganar, retorna 1
-                if (contador === condicionganar) {
-                    console.log("¡Ganó!");
-                    return jugador;
-                }
-            } else {
-                // Si el jugador no está en esta posición, reinicia el contador
-                estaSeguido = false;
-                contador = 0;
-            }
-        }
+        contador = 0;
+      }
     }
-
-    return 0; // Retorna 0 si no hay ganador en ninguna columna
+  }
+  return 0; // Retorna 0 si no hay ganador en ninguna fila
 }
 
-function ganadorDiagonalDecreciente(jugador, matriz, condicionGanar){
+/* verifica si gana vertical */
+function ganadorVertical(jugador, matriz, condicionganar) {
+  let contador = 0;
+  let estaSeguido = false;
 
-        let maxfil = matriz.length;
-        let maxcol = matriz[0].length;
-    
-        for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
-            for (let col = 0; col <= maxcol - condicionGanar; col++) {
-                let contador = 0;
-    
-                // Verifica la diagonal creciente
-                for (let i = 0; i < condicionGanar; i++) {
-                    if (matriz[fil + i][col + i] === jugador) {
-                        contador++;
-                    } else {
-                        break; // Si encuentra un número diferente, rompe el bucle
-                    }
-                }
-                // Si el contador alcanza la condición de ganar, retorna 1
-                if (contador === condicionGanar) {
-                    console.log("¡Ganó en diagonal decreciente!");
-                    return 1;
-                }
-            }
+  // Calcula los límites de filas y columnas de la matriz
+  let maxfil = matriz.length;
+  let maxcol = matriz[0].length;
+
+  for (let col = 0; col < maxcol; col++) {
+    contador = 0; // Reinicia el contador para cada fila
+    estaSeguido = false;
+
+    for (let fil = 0; fil < maxfil; fil++) {
+      if (matriz[fil][col] === jugador) {
+        estaSeguido = true;
+        contador++;
+
+        // Si se cumple la condición de ganar, retorna 1
+        if (contador === condicionganar) {
+          console.log("¡Ganó!");
+          return jugador;
         }
-    
-        return 0; // Retorna 0 si no hay seguidilla en diagonal
+      } else {
+        // Si el jugador no está en esta posición, reinicia el contador
+        estaSeguido = false;
+        contador = 0;
+      }
+    }
+  }
+
+  return 0; // Retorna 0 si no hay ganador en ninguna columna
 }
 
+function ganadorDiagonalDecreciente(jugador, matriz, condicionGanar) {
+  let maxfil = matriz.length;
+  let maxcol = matriz[0].length;
 
-function ganadorDiagonalCreciente(jugador,matriz,condicionGanar){
-        let maxfil = matriz.length;
-        let maxcol = matriz[0].length;
-    
-        for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
-            for (let col = condicionGanar - 1; col < maxcol; col++) {
-                let contador = 0;
-    
-                // Verifica la diagonal decreciente
-                for (let i = 0; i < condicionGanar; i++) {
-                    if (matriz[fil + i][col - i] === jugador) {
-                        contador++;
-                    } else {
-                        break; // Si encuentra un número diferente, rompe el bucle
-                    }
-                }
-    
-                // Si el contador alcanza la condición de ganar, retorna 1
-                if (contador === condicionGanar) {
-                    console.log("¡Ganó en diagonal creciente!");
-                    return 1;
-                }
-            }
+  for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
+    for (let col = 0; col <= maxcol - condicionGanar; col++) {
+      let contador = 0;
+
+      // Verifica la diagonal creciente
+      for (let i = 0; i < condicionGanar; i++) {
+        if (matriz[fil + i][col + i] === jugador) {
+          contador++;
+        } else {
+          break; // Si encuentra un número diferente, rompe el bucle
         }
-    
-        return 0; // Retorna 0 si no hay seguidilla en diagonal
+      }
+      // Si el contador alcanza la condición de ganar, retorna 1
+      if (contador === condicionGanar) {
+        console.log("¡Ganó en diagonal decreciente!");
+        return 1;
+      }
     }
+  }
 
+  return 0; // Retorna 0 si no hay seguidilla en diagonal
+}
 
+function ganadorDiagonalCreciente(jugador, matriz, condicionGanar) {
+  let maxfil = matriz.length;
+  let maxcol = matriz[0].length;
 
-    class Ficha {
-        constructor(x, y, radio, imagenSrc) {
-            this.x = x; // Posición en el eje X
-            this.y = y; // Posición en el eje Y
-            this.radio = radio; // Radio de la ficha
-            this.imagen = new Image(); // Crear una nueva imagen
-            this.imagen.src = imagenSrc; // Ruta de la imagen
+  for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
+    for (let col = condicionGanar - 1; col < maxcol; col++) {
+      let contador = 0;
+
+      // Verifica la diagonal decreciente
+      for (let i = 0; i < condicionGanar; i++) {
+        if (matriz[fil + i][col - i] === jugador) {
+          contador++;
+        } else {
+          break; // Si encuentra un número diferente, rompe el bucle
         }
-    
-        // Método para dibujar la ficha en el canvas con imagen
-        dibujar(ctx) {
-            // Dibujar la imagen solo después de que se haya cargado
-            this.imagen.onload = () => {
-                // Crear un círculo de recorte
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
-                ctx.closePath();
-                ctx.clip();
-    
-                // Dibujar la imagen dentro del área de recorte
-                ctx.drawImage(
-                    this.imagen,
-                    this.x - this.radio, // Coordenada x para que la imagen se centre en el círculo
-                    this.y - this.radio, // Coordenada y para que la imagen se centre en el círculo
-                    this.radio * 2,      // Ancho de la imagen en el círculo
-                    this.radio * 2       // Alto de la imagen en el círculo
-                );
-    
-                // Restaurar el contexto a su estado original
-                ctx.restore();
-            };
-        }
+      }
+
+      // Si el contador alcanza la condición de ganar, retorna 1
+      if (contador === condicionGanar) {
+        console.log("¡Ganó en diagonal creciente!");
+        return 1;
+      }
     }
+  }
+
+  return 0; // Retorna 0 si no hay seguidilla en diagonal
+}
+
+class Ficha {
+  constructor(x, y, radio, imagenSrc) {
+    this.x = x; // Posición en el eje X
+    this.y = y; // Posición en el eje Y
+    //0=listo, 1=clickeado, 2=colocado en columna, 3=cayendo, 4=final(quieto e inamovible). lo puse como entero para que no sea ambiguo (si me escribís cAyEnDO ya no es == a cayendo)
+    this.estado = 0
+    this.radio = radio; // Radio de la ficha
+    this.imagen = new Image(); // Crear una nueva imagen
+    this.imagen.src = imagenSrc; // Ruta de la imagen
+  }
+  setEstado(nuevoEstado){
+    this.estado = nuevoEstado
+  }
+  setX(nuevoX){
+    this.x = nuevoX
+  }
+  setY(nuevoY){
+    this.y = nuevoY
+  }
+  //estado1: pegarme al mouse
+  pin(e){
+    this.setX(e.offsetX)
+    this.setY(e.offsetY)
+    console.log('(',this.x,',', this.y,')')
+  }
+  // Método para dibujar la ficha en el canvas con imagen
+  dibujar(ctx) {
+    // Dibujar la imagen solo después de que se haya cargado
+    this.imagen.onload = () => {
+      // Crear un círculo de recorte
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+
+      // Dibujar la imagen dentro del área de recorte
+      ctx.drawImage(
+        this.imagen,
+        this.x - this.radio, // Coordenada x para que la imagen se centre en el círculo
+        this.y - this.radio, // Coordenada y para que la imagen se centre en el círculo
+        this.radio * 2, // Ancho de la imagen en el círculo
+        this.radio * 2 // Alto de la imagen en el círculo
+      );
+
+      // Restaurar el contexto a su estado original
+      ctx.restore();
+    };
+  }
+}
