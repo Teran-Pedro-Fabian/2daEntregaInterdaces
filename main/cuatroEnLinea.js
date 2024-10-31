@@ -48,56 +48,61 @@ const estado2 = ()=>{
   }
   /* Funcion para seleccionar ficha */
   let fichaCapitanAmerica = document.querySelectorAll("#idcap img");
-  console.log(fichaCapitanAmerica.length);
 
   for (let index = 0; index < fichaCapitanAmerica.length; index++) {
     fichaCapitanAmerica[index].addEventListener("click", () => {
       fichaCapitanAmerica.forEach((img) => img.classList.remove("circularCapitanAmerica"));
       fichaCapitanAmerica[index].classList.add("circularCapitanAmerica");
       console.log(fichaCapitanAmerica[index].src)
-      console.log(typeof fichaCapitanAmerica[index].src)
+      console.log(typeof fichaCapitanAmerica[index].src)  //debug para ver que se esta guardando
       imagenesElegidas.jug1 = fichaCapitanAmerica[index]
     });
   }
   let fichaIronMan = document.querySelectorAll("#idIron img");
-  console.log(fichaCapitanAmerica.length);
 
   for (let index = 0; index < fichaIronMan.length; index++) {
     fichaIronMan[index].addEventListener("click", () => {
       fichaIronMan.forEach((img) => img.classList.remove("circularIronMan"));
       fichaIronMan[index].classList.add("circularIronMan");
-      imagenesElegidas.jug2 = fichaIronMan[index] 
+      console.log(fichaIronMan[index].src)
+      console.log(typeof fichaIronMan[index].src) //debug para ver que se esta guardando
+      imagenesElegidas.jug2 = fichaIronMan[index]
     });
   }
   /* se detencta la imagen elejida por cada uno de los jugadores con la clase que se le aplica respectivamente
   circularCapitanAmerica    y   circularIronMan*/
 
   /* traigo el valor de forma de ganar para poder iniciar el juego*/
-  const formaGanar = 0;
-  document.querySelector("btnEmpezarJuego").addEventListener("click", ()=>{
-    formaGanar= document.querySelector("formaGanar").value;
-    //escondo la seccion 2, muestro la 3
-    seccion2.classList.remove('bloque')
-    seccion2.classList.add("oculto")
-    seccion3.classList.remove("oculto")
-    seccion3.classList.add('bloque')
-    console.log('PASO AL ESTADO 3') //debug
-  })
-}
+  let formaGanar = 0;
 
-const estado3 = ()=>{
+  document.querySelector("#btnEmpezarJuego").addEventListener("click", ()=>{
+      console.log(document.querySelector("#formaGanar").value) //debug para ver si puedo pasarlo como numero
+      formaGanar= document.querySelector("#formaGanar").value;
+      console.log(formaGanar)
+      //escondo la seccion 2, muestro la 3
+      seccion2.classList.remove('bloque')
+      seccion2.classList.add("oculto")
+      seccion3.classList.remove("oculto")
+      seccion3.classList.add('bloque')
+      console.log('PASO AL ESTADO 3') //debug
+      estado3(imagenesElegidas, miCanvas, formaGanar)
+    })
+  }
+
+const estado3 = (img, canvas, size)=>{
   /*ESTADO 3: callback para mantener el game loop/ ir al estado 2 (con respectivos event listener)*/
   console.log('ESTOY EN EL ESTADO 3') //debug
   // Obtener el contexto del canvas
-  const ctx = miCanvas.getContext("2d");
+  const ctx = canvas.getContext("2d");
   //instancio clase Juego y lo inicio
   const juego = new Juego(
-    miCanvas,
-    (2*formaGanar-1),
-    (2*formaGanar-1),
-    imagenesElegidas.jug1,
-    imagenesElegidas.jug2,
-    formaGanar)
+    canvas,
+    (2*size-2), //se hace -2 para tener una fila que sea para insertar, pero evidentemente no cuenta para la matriz del juego, la condición de victoria se revisa en el arreglo
+    (2*size-1), //vimos otros 4 en línea en internet y todos manejan un 7x6... generalizamos
+    img.jug1.src,
+    img.jug2.src,
+    size)
+    console.log('CREO UNA INSTANCIA DE JUEGO')
   juego.jugar()
 }
 
@@ -160,12 +165,20 @@ class Ficha {
 
 class Juego{
   //elementoDOM se usa para hacer referencia al canvas, lo vamos a llamar más tarde. X e Y se determinan cuando se decide de cuántas fichas en línea se trata
-  constructor(elementoDOM, filasDesignadas, colDesignadas, img1, img2, cantGanar){
+  constructor(elementoDOM, //se está pasando directamente referencia al elemento HTML
+    filasDesignadas, //se pasan en función del select
+    colDesignadas,
+    img1, //se pasan strings con las rutas de lo que cada quién eligió
+    img2,
+    cantGanar //se pasa en función del select
+  ){
     this.filas = filasDesignadas
+    console.log(this.filas)
     this.columnas = colDesignadas
+    console.log(this.columnas)
     //necesitamos saber quién va
     this.turno = 1
-    this.tablero = document.querySelector(elementoDOM)
+    this.elementoDOM = elementoDOM
     //si alguien gana, jugando se vuelve false (y nuestra función que revisa quién ganó mostrará quién ganó)
     this.jugando = true
     this.cantGanar = cantGanar
@@ -173,26 +186,13 @@ class Juego{
     this.onAlguienJuega = () =>{
       this.actualizarInfoJugador()
     }
-    //el juego tiene sus imágenes y esto lo vuelve mantenible y escalable
-    this.imagenesJugadores = {
-      1: [
-        `../images/imagenesParaFichas/capitanAmericaFicha1.jpg`,
-        `../images/imagenesParaFichas/capitanAmericaFicha2.jpg`,
-        `../images/imagenesParaFichas/capitanAmericaFicha3.jpg`,
-        `../images/imagenesParaFichas/capitanAmericaFicha4.jpg`
-      ],
-      2: [
-        `../images/imagenesParaFichas/ironManFicha1.jpg`,
-        `../images/imagenesParaFichas/ironManFicha2.jpg`,
-        `../images/imagenesParaFichas/ironManFicha3.jpg`,
-        `../images/imagenesParaFichas/ironManFicha4.jpg`
-      ]
-    }
     this.imagenesElegidas= {
         jug1: img1,
         jug2: img2
     }
-    this.crearGrid()
+    let board = Array(filasDesignadas).fill().map(() => Array(colDesignadas).fill(0))
+    console.table(board)
+    this.board = board
   }
   
   //METODOS
@@ -216,23 +216,26 @@ class Juego{
       resetButton.addEventListener()
     }
     //GENERO EL TABLERO
-    //crea un arreglo 2d en el que vamos a ir guardando las fichas. 0 es vacio, 1 es jug1, 2 es jug2
+    //crea un arreglo 2d en el que vamos a ir guardando la info de las fichas. 0 es vacio, 1 es jug1, 2 es jug2
     crearGrid(){
-      const $tablero = document.querySelector(this.selector)
       const $entrada = document.querySelector('#entrada')
-      $tablero.innerHTML = ""
-      this.grid = []
-
-      for(let col = 0; col < this.columnas; col++){
-        for(let fila = 0; fila < this.filas; fila++){
-          this.grid[columna, fila] = 0
-        }
-      }
+      this.elementoDOM.innerHTML = ""
+      
+      
+      this.grid = grid
+      //actualizar el DOM
     }
     //DIBUJO (presente en estado 2, estado 3)
     //dibujo ficha en el x,y especificado
-    dibujarFicha(x,y,imagen){
-      ctx.drawImage(imagen, x-(img.width/2), y-(img.height/2))
+    dibujarFicha(x,y){
+      ctx.drawImage(
+        this.turno==1?this.imagenesElegidas.jug1:this.imagenesElegidas.jug2,
+        x-(img.width/2),
+        y-(img.height/2))
+    }
+    //basado en lo que tiene la matriz, dibujo el canvas
+    updateBoard(){
+
     }
     //CHEQUEO CONDICIÓN DE VICTORIA (presente en estado 3)
     //reviso si ya gané, pero desde la posición en la que estoy (ver toda la matriz es más costoso en lectura). Si en ninguna de las direcciones se ganó, se sigue
@@ -262,6 +265,7 @@ class Juego{
     //METODO PRINCIPAL
     jugar(){
       do{
+        let colActual = 0;
         //espero a que clickee en su ficha elegida
         //pineo la ficha al mouse hasta que clickee una columna válida
         //dejo caer la ficha
