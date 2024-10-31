@@ -200,8 +200,16 @@ console.log(fichaCapitanAmerica.length);
 
 for (let index = 0; index < fichaCapitanAmerica.length; index++) {
   fichaCapitanAmerica[index].addEventListener("click", () => {
-    fichaCapitanAmerica.forEach((img) => img.classList.remove("circular"));
-    fichaCapitanAmerica[index].classList.add("circular");
+    fichaCapitanAmerica.forEach((img) => img.classList.remove("circularCapitanAmerica"));
+    fichaCapitanAmerica[index].classList.add("circularCapitanAmerica");
   });
 }
+let fichaIronMan = document.querySelectorAll("#idIron img");
+console.log(fichaCapitanAmerica.length);
 
+for (let index = 0; index < fichaIronMan.length; index++) {
+  fichaIronMan[index].addEventListener("click", () => {
+    fichaIronMan.forEach((img) => img.classList.remove("circularIronMan"));
+    fichaIronMan[index].classList.add("circularIronMan");
+  });
+}
