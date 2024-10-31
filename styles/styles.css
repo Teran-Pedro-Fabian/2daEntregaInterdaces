@@ -1036,7 +1036,7 @@ footer img{
             align-items: center;
             justify-content: center;
             width: 80%;
-            background-image: url("../images/aaaa.jpg");
+            background-color: rgb(114, 114, 114);
         }
 
         .imgJuego{

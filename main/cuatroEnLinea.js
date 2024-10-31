@@ -45,6 +45,8 @@ class Ficha {
 
       // Restaurar el contexto a su estado original
       ctx.restore();
+
+      
     };
   }
 }
@@ -177,6 +179,7 @@ let inicio = document.querySelector("#btnJugar");
 //acá se lanza el juego:
 inicio.addEventListener("click", () => {
   inicio.classList.remove("bloque");
+  document.querySelector(".seccion2").classList.remove("oculto")
   inicio.classList.add("oculto");
   miCanvas.classList.remove("oculto");
   miCanvas.classList.add("bloque");
