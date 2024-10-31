@@ -20,7 +20,6 @@
                     <li>contactos</li>
                     <li>ayuda</li>
                 </ul>
-    
             </div>
             <div id="boton" class="hamburger-btn">
                 <div class="line"></div>
@@ -54,16 +53,17 @@
 
         <section class="conteinerJuego">
             <div class="juego">
-                <canvas class="oculto" id="miCanvas"></canvas>
-                <button class="btn_card btnGame bloque" id="btnJugar">
-                    Jugar
-                    <div class="animation_btn_play"></div>
-                </button>
+                <section class="seccion1 bloque">
+                    <div>
+                        <button class="btn_card btnGame" id="btnJugar">
+                            Jugar <div class="animation_btn_play"></div>
+                        </button>
+                    </div>
+                </section>                
                 <section class="seccion2 oculto">
-
+                    <p>Elegir fichas!</p>
                     <div class="contenedorImagenesFichas">
                         <div id="idcap" class="ordenFichasJuego">
-
                             <img src="./images/imagenesParaFichas/capitanAmericaFicha1.jpg" alt="">
                             <img src="./images/imagenesParaFichas/capitanAmericaFicha3.jpg" alt="">
                             <img src="./images/imagenesParaFichas/capitanAmericaFicha4.jpg" alt="">
@@ -78,6 +78,7 @@
                         </div>
 
                     </div>
+                    <p>Elegir modo de juego!</p>
                     <div class="contenedorSelectBoton">
                         <select name="" id="formaGanar">
                              <option value="4">4 en linea</option>
@@ -88,6 +89,12 @@
                         <button id="btnEmpezarJuego">jugar</button>
 
                     </div>
+                </section>
+                <section class="seccion3 oculto">
+                    <ul id="entrada">
+                        
+                    </ul>
+                    <canvas id="miCanvas"></canvas>
                 </section>
             </div>
                       
