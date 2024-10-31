@@ -191,3 +191,17 @@ const ctx = miCanvas.getContext("2d");
 
 //estado 3 se dispararía con un new Juego() según lo que configuren
 //y con un jugar, ver nombres
+
+//tomar valores de imagenes
+
+let fichaCapitanAmerica = document.querySelectorAll("#idcap img");
+console.log(fichaCapitanAmerica.length);
+
+for (let index = 0; index < fichaCapitanAmerica.length; index++) {
+  fichaCapitanAmerica[index].addEventListener("click", ()=>{
+    let aux = fichaCapitanAmerica[index].classList.toggle("circular")
+   
+
+  })
+  
+}

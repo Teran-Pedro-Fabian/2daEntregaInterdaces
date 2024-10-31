@@ -1787,6 +1787,28 @@ footer img{
     }
     
 
-    
-    
+    /* Etapa seleccion ficha */
+    .contenedorImagenesFichas{
+        display: flex;
+        margin-right: 70%;
+        
+    }
+    .contenedorSelectBoton{
+        display: flex;
+        flex-direction: column;
+        width: 26%;
+        margin-top: 2%;
+    }
+    .ordenFichasJuego img{
+        border-radius: 50%;
+        transition: box-shadow 0.3s ease; /* Suaviza la transición */
+    }
+    .ordenFichasJuego img:hover{
+        background-color: white;
+        box-shadow: 0px 0px 20px 10px rgba(255, 255, 255, 0.8); /* Efecto de luz */
+      
+    }
+    .circular{
+        border: white 5px solid;
+    }
 }
