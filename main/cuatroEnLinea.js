@@ -193,7 +193,7 @@ const ctx = miCanvas.getContext("2d");
 //y con un jugar, ver nombres
 
 
-/* Funcion para seleccionar ficha */
+/* Funcion para seleccionar ficha *////////////////////////////////////////////
 
 let fichaCapitanAmerica = document.querySelectorAll("#idcap img");
 console.log(fichaCapitanAmerica.length);
@@ -202,6 +202,7 @@ for (let index = 0; index < fichaCapitanAmerica.length; index++) {
   fichaCapitanAmerica[index].addEventListener("click", () => {
     fichaCapitanAmerica.forEach((img) => img.classList.remove("circularCapitanAmerica"));
     fichaCapitanAmerica[index].classList.add("circularCapitanAmerica");
+    imagenesElegidas.jug1 = fichaCapitanAmerica[index]
   });
 }
 let fichaIronMan = document.querySelectorAll("#idIron img");
@@ -211,5 +212,14 @@ for (let index = 0; index < fichaIronMan.length; index++) {
   fichaIronMan[index].addEventListener("click", () => {
     fichaIronMan.forEach((img) => img.classList.remove("circularIronMan"));
     fichaIronMan[index].classList.add("circularIronMan");
+    imagenesElegidas.jug2 = fichaIronMan[index] 
   });
 }
+/* se detencta la imagen elejida por cada uno de los jugadores con la clase que se le aplica respectivamente
+ circularCapitanAmerica    y   circularIronMan*/
+
+/* traigo el valor de forma de ganar para poder  */
+let formaGanar = 0;
+document.querySelector("btnEmpezarJuego").addEventListener("click", ()=>{
+  formaGanar= document.querySelector("formaGanar").value;
+})
