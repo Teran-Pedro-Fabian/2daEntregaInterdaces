@@ -51,7 +51,7 @@ class Ficha {
 
 class Juego{
   //elementoDOM se usa para hacer referencia al canvas, lo vamos a llamar más tarde. X e Y se determinan cuando se decide de cuántas fichas en línea se trata
-  constructor(elementoDOM, filasDesignadas, colDesignadas, img1, img2){
+  constructor(elementoDOM, filasDesignadas, colDesignadas, img1, img2, cantGanar){
     this.filas = filasDesignadas
     this.columnas = colDesignadas
     //necesitamos saber quién va
@@ -59,6 +59,7 @@ class Juego{
     this.tablero = document.querySelector(elementoDOM)
     //si alguien gana, jugando se vuelve false (y nuestra función que revisa quién ganó mostrará quién ganó)
     this.jugando = true
+    this.cantGanar = cantGanar
     //si alguien jugó, lo disparamos desde la función "jugar" y llamamos a un callback para que sea orientado a eventos
     this.onAlguienJuega = () =>{
       this.actualizarInfoJugador()
@@ -95,7 +96,8 @@ class Juego{
       jug1.classList.remove("activo")
     }
   }
-  //SETUP
+
+  //SETUP (estado 2, estado 3)
   //configuro que clickeen en distintas zonas del canvas
   configEntradas(){
     let resetButton = document.querySelector("#reset")
@@ -115,40 +117,62 @@ class Juego{
     }
   }
 
-  //DIBUJO
+  //DIBUJO (estado 2, estado 3)
   //dibujo ficha en el x,y especificado
   dibujarFicha(x,y,imagen){
     ctx.drawImage(imagen, x-(img.width/2), y-(img.height/2))
   }
 
-
-  //reviso si ya gané
+  //CHEQUEO CONDICIÓN DE VICTORIA (estado 3)
+  //reviso si ya gané, pero desde la posición en la que estoy (ver toda la matriz es más costoso en lectura). Si en ninguna de las direcciones se ganó, se sigue
   chequearVictoria(col, fila){
     return(
-      this.chequearEnDireccion(col, fila, 0, 1) || //aumentá para la derecha
-      this.chequearEnDireccion(col, fila, 1, 0) || //" " abajo
-      this.chequearEnDireccion(col, fila, 1, 1) || //" " derecha, abajo (diagonal descendiente)
-      this.chequearEnDireccion(col, fila, 1, 1)  //" " derecha, arriba (diagonal ascendiente)
+      1 - this.chequearEnDireccion(col, fila, -1, -1) + this.chequearEnDireccion(col, fila, 1, 1) == this.cantGanar || //diag desc: arriba izq+abajo der
+      1 - this.chequearEnDireccion(col, fila, -1, 0) + this.chequearEnDireccion(col, fila, 1, 0) == this.cantGanar || //horizontal: izq+der
+      1 - this.chequearEnDireccion(col, fila, -1, 1) + this.chequearEnDireccion(col, fila, 1, -1) == this.cantGanar || //diag crec: der arr+abajo izq
+      this.chequearEnDireccion(col, fila, 0, 1) == this.cantGanar //abajo
     )
   }
 
-  chequearEnDireccion(col, fila, varH, varV, accum){
-    if (accum == 4) return true
-    if (this.grid[col][fila] == this.turno) return this.chequearEnDireccion(col+varH, fila+varV, varH, varV)
+  //revisa cuántas de la misma hay seguidas exclusivamente en la dirección indicada por varH y varV
+  chequearEnDireccion(col, fila, varH, varV, contador){
+    if (this.grid[col][fila] == this.turno){
+      contador++
+      //si ya gané, corto la ejecución
+      if (contador == this.cantGanar) 
+        return contador
+    }
+    //si la posición que voy a revisar es válida, reviso; de otra manera ya llegué a un límite y no puedo seguir
+    if(0 <= col+varH && col+varH < this.grid.length && 0 <= fila+varV && fila+varV <this.grid[0].length)
+      return this.chequearEnDireccion(col+varH, fila+varV, varH, varV, contador)
+    else
+      return contador
   } 
 }
 
+/*ESTADO 2: callback para entrar y saltar a estado 3/ volver a estado 1 (para que el botón de back tenga más función que sólo volver a estado 2)*/
+//TODO 1 acá definiríamos un callback para esperar clic en botón y pasarle la info al constructor de Juego()+llamar al callback del estado 3
+/*ESTADO 3: callback para mantener el game loop/ ir al estado 2 (con respectivos event listener)*/
+//TODO 2 acá definiríamos el callback del game loop/volver 
+
+/*EJECUCION PRINCIPAL
+*El juego tiene 3 estados: 
+*1-Esperando para entrar a jugar
+*2-Elegir fichas y tamaño del tablero
+*3-Jugando
+*Estados 1 y 2 todavía no dibujan canvas (para hacerla menos complicada), pero sí interfaz
+*Estado 3 tiene un botoncito de reset (que reinicia el juego: reemplaza la instancia de Juego() por una en blanco) y uno de back (que resta uno al estado)
+*/
+
 let maxcol;
 let maxfil;
-let condicionganar = 3;
 const j1 = 1;
 const j2 = 2;
-let valorMinimo = 4;
-let cuatroEnLinea;
 
 //escuchar al botoncito para cargar el canvas
 const miCanvas = document.getElementById("miCanvas");
-console.log(`El canvas es ${miCanvas}`);
+console.log(`El canvas es ${miCanvas}`); //debug
+//ESTADO 1: ver si quieren jugar => lanzar juego
 let inicio = document.querySelector("#btnJugar");
 //acá se lanza el juego:
 inicio.addEventListener("click", () => {
@@ -156,142 +180,11 @@ inicio.addEventListener("click", () => {
   inicio.classList.add("oculto");
   miCanvas.classList.remove("oculto");
   miCanvas.classList.add("bloque");
-  jugar();
+  config();
 });
 
 // Obtener el contexto del canvas
 const ctx = miCanvas.getContext("2d");
 
-// Acá dibuja la pantalla. Estimo que vamos a darle algo como 30 FPS así que dentro de jugar(), un interval va a llamar a drawScreen 30 veces por segundo
-const drawScreen = () => {
-
-};
-
-function seteoDeTamanio(valor) {
-  if (valor >= valorMinimo) {
-    maxcol = valor;
-    maxfil = valor;
-    // Crea la matriz con el nuevo tamaño
-    cuatroEnLinea = new Array(maxcol)
-      .fill(0)
-      .map(() => new Array(maxfil).fill(0));
-  }
-}
-
-// Inicializa la matriz para depuración y pruebas
-seteoDeTamanio(4);
-console.table(cuatroEnLinea);
-
-  for (let fil = 0; fil < maxfil; fil++) {
-    contador = 0; // Reinicia el contador para cada fila
-    estaSeguido = false;
-
-    for (let col = 0; col < maxcol; col++) {
-      if (matriz[fil][col] === jugador) {
-        estaSeguido = true;
-        contador++;
-
-        // Si se cumple la condición de ganar, retorna 1
-        if (contador === condicionGanar) {
-          console.log("¡Victoria!");
-          return jugador;
-        }
-      } else {
-        // Si el jugador no está en esta posición, reinicia el contador
-        estaSeguido = false;
-        contador = 0;
-      }
-    }
-  }
-  return 0; // Retorna 0 si no hay ganador en ninguna fila
-
-
-/* verifica si gana vertical */
-function ganadorVertical(jugador, matriz, condicionganar) {
-  let contador = 0;
-  let estaSeguido = false;
-
-  // Calcula los límites de filas y columnas de la matriz
-  let maxfil = matriz.length;
-  let maxcol = matriz[0].length;
-
-  for (let col = 0; col < maxcol; col++) {
-    contador = 0; // Reinicia el contador para cada fila
-    estaSeguido = false;
-
-    for (let fil = 0; fil < maxfil; fil++) {
-      if (matriz[fil][col] === jugador) {
-        estaSeguido = true;
-        contador++;
-
-        // Si se cumple la condición de ganar, retorna 1
-        if (contador === condicionganar) {
-          console.log("¡Ganó!");
-          return jugador;
-        }
-      } else {
-        // Si el jugador no está en esta posición, reinicia el contador
-        estaSeguido = false;
-        contador = 0;
-      }
-    }
-  }
-
-  return 0; // Retorna 0 si no hay ganador en ninguna columna
-}
-
-function ganadorDiagonalDecreciente(jugador, matriz, condicionGanar) {
-  let maxfil = matriz.length;
-  let maxcol = matriz[0].length;
-
-  for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
-    for (let col = 0; col <= maxcol - condicionGanar; col++) {
-      let contador = 0;
-
-      // Verifica la diagonal creciente
-      for (let i = 0; i < condicionGanar; i++) {
-        if (matriz[fil + i][col + i] === jugador) {
-          contador++;
-        } else {
-          break; // Si encuentra un número diferente, rompe el bucle
-        }
-      }
-      // Si el contador alcanza la condición de ganar, retorna 1
-      if (contador === condicionGanar) {
-        console.log("¡Ganó en diagonal decreciente!");
-        return 1;
-      }
-    }
-  }
-
-  return 0; // Retorna 0 si no hay seguidilla en diagonal
-}
-
-function ganadorDiagonalCreciente(jugador, matriz, condicionGanar) {
-  let maxfil = matriz.length;
-  let maxcol = matriz[0].length;
-
-  for (let fil = 0; fil <= maxfil - condicionGanar; fil++) {
-    for (let col = condicionGanar - 1; col < maxcol; col++) {
-      let contador = 0;
-
-      // Verifica la diagonal decreciente
-      for (let i = 0; i < condicionGanar; i++) {
-        if (matriz[fil + i][col - i] === jugador) {
-          contador++;
-        } else {
-          break; // Si encuentra un número diferente, rompe el bucle
-        }
-      }
-
-      // Si el contador alcanza la condición de ganar, retorna 1
-      if (contador === condicionGanar) {
-        console.log("¡Ganó en diagonal creciente!");
-        return 1;
-      }
-    }
-  }
-
-  return 0; // Retorna 0 si no hay seguidilla en diagonal
-}
-
+//estado 3 se dispararía con un new Juego() según lo que configuren
+//y con un jugar, ver nombres
