@@ -34,6 +34,7 @@ const estado1 = ()=>{
     inicio.classList.add("oculto");
     seccion2.classList.remove("oculto")
     seccion2.classList.add('bloque')
+    miCanvas.classList.remove("oculto");
     console.log('PASO AL ESTADO 2') //debug
     estado2();
   });
@@ -264,6 +265,7 @@ class Juego{
     }
     //METODO PRINCIPAL
     jugar(){
+      
       do{
         let colActual = 0;
         //espero a que clickee en su ficha elegida

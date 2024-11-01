@@ -159,7 +159,7 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 70%;
     background-image: url("../images/ironmavscapitan.jpg") no-repeat center;
     background-size: cover;
 }
@@ -1425,7 +1425,9 @@ footer img{
     }
 
     .bloque {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .oculto {
@@ -1800,11 +1802,18 @@ footer img{
     
 
     /* Etapa seleccion ficha */
-    .contenedorImagenesFichas{
+    div .contenedorImagenesFichas{
         display: flex;
-        margin-right: 70%;
-        
+        /* margin-right: 70%; */
+        justify-content: space-around;
+        margin-bottom: 45px;
+
     }
+
+    .ordenFichasJuego{
+        margin: 0px 20px 0 20px;
+    }
+
     .contenedorSelectBoton{
         display: flex;
         flex-direction: column;
@@ -1814,6 +1823,8 @@ footer img{
     .ordenFichasJuego img{
         border-radius: 50%;
         transition: box-shadow 0.3s ease; /* Suaviza la transición */
+        width: 60px;
+        height: 60px;
     }
     .ordenFichasJuego img:hover{
         background-color: white;
@@ -1825,5 +1836,44 @@ footer img{
     }
     .circularIronMan{
         border: red 2px solid;
+    }
+
+    .seccion2 p{
+        font-family: "Silkscreen", sans-serif;
+        font-weight: 400px;
+        font-style: normal;
+        font-size: xx-large;
+    }
+
+    select {
+        font-family: "Silkscreen", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: larger;
+
+    } 
+    .contenedorSelectBoton #formaGanar option{
+        font-family: "Silkscreen", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    } 
+    .contenedorSelectBoton button{
+
+        margin-top: 100px;
+        font-family: "Silkscreen", sans-serif;
+        font-size: xx-large;
+        font-style: normal;
+        background-color: var(--1ro-400);
+        color: white;
+        border-radius: 9px;
+        height: 60px;
+
+    }
+    .contenedorSelectBoton .ordenFichasJuego{
+        margin-bottom: 120px;
+    }
+
+    #btnEmpezarJuego:hover{
+        background-color: var(--1ro-500);
     }
 }
