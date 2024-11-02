@@ -111,59 +111,7 @@ const estado3 = (img, canvas, size)=>{
 //Arranco en estado (del juego) 1: esperando que quieran arrancar a jugar
 estado1()
 
-/*FIN EJECUCION, ARRANCA DECLARACION DE CLASES*/
-
-class Ficha {
-  constructor(x, y, radio, imagenSrc) {
-    this.x = x; // Posición en el eje X
-    this.y = y; // Posición en el eje Y
-    //0=listo, 1=clickeado, 2=colocado en columna, 3=cayendo, 4=final(quieto e inamovible). lo puse como entero para que no sea ambiguo (si me escribís cAyEnDO ya no es == a cayendo)
-    this.estado = 0
-    this.radio = radio; // Radio de la ficha
-    this.imagen = new Image(); // Crear una nueva imagen
-    this.imagen.src = imagenSrc; // Ruta de la imagen
-  }
-  setEstado(nuevoEstado){
-    this.estado = nuevoEstado
-  }
-  setX(nuevoX){
-    this.x = nuevoX
-  }
-  setY(nuevoY){
-    this.y = nuevoY
-  }
-  //estado1: pegarme al mouse
-  pin(e){
-    this.setX(e.offsetX)
-    this.setY(e.offsetY)
-    console.log('(',this.x,',', this.y,')')
-  }
-  // Método para dibujar la ficha en el canvas con imagen
-  dibujar(ctx) {
-    // Dibujar la imagen solo después de que se haya cargado
-    this.imagen.onload = () => {
-      // Crear un círculo de recorte
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radio, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-
-      // Dibujar la imagen dentro del área de recorte
-      ctx.drawImage(
-        this.imagen,
-        this.x - this.radio, // Coordenada x para que la imagen se centre en el círculo
-        this.y - this.radio, // Coordenada y para que la imagen se centre en el círculo
-        this.radio * 2, // Ancho de la imagen en el círculo
-        this.radio * 2 // Alto de la imagen en el círculo
-      );
-
-      // Restaurar el contexto a su estado original
-      ctx.restore();
-    };
-  }
-}
-
+/*FIN EJECUCION, ARRANCA DECLARACION DE CLASE*/
 class Juego{
   //elementoDOM se usa para hacer referencia al canvas, lo vamos a llamar más tarde. X e Y se determinan cuando se decide de cuántas fichas en línea se trata
   constructor(elementoDOM, //se está pasando directamente referencia al elemento HTML
@@ -191,40 +139,80 @@ class Juego{
         jug1: img1,
         jug2: img2
     }
-    let board = Array(filasDesignadas).fill().map(() => Array(colDesignadas).fill(0))
-    console.table(board)
-    this.board = board
+    this.jug1 = document.querySelector("#jug1")
+    this.jug2 = document.querySelector("#jug2")
+    this.crearGrid(filasDesignadas, colDesignadas)
+    this.board;
+    this.colActual = 0
+    this.filaActual = 0
+    //declaro acá, los inicio con el configEntradas()
+    this.entrada;
+    this.resetButton;
+    this.backButton;
+    //y llamo al jugar(), que también llama a su vez a configEntradas. El input pasa a ser responsive cuando ya cargó por completo la función y quedó en ejecución el juego
+    this.jugar()
   }
   
   //METODOS
     //INTERNOS
     //para cambiar de turno
     actualizarInfoJugador(){
-      const jug1 = document.querySelector(".jug1")
-      const jug2 = document.querySelector(".jug2")
       if(this.turno === 1){
-        jug1.classList.add("activo")
-        jug2.classList.remove("activo")
+        this.jug1.classList.add("activo")
+        this.jug2.classList.remove("activo")
       } else {
-        jug2.classList.add("activo")
-        jug1.classList.remove("activo")
+        this.jug2.classList.add("activo")
+        this.jug1.classList.remove("activo")
       }
     }
-    //SETUP
-    //configuro que clickeen en distintas zonas del canvas
-    configEntradas(){
-      let resetButton = document.querySelector("#reset")
-      resetButton.addEventListener()
+    cambiaTurno(){
+      this.turno = this.turno==1?2:1
     }
+    //SETUP
+    //configuro que apreten las flechitas/los botones
+    configEntradas(){
+      this.entrada
+      this.resetButton = document.querySelector("#reset")
+      resetButton.addEventListener('click', resetBoard())
+      this.backButton = document.querySelector('#back')
+      this.backButton.addEventListener('click', goBack())
+      const inputElement = document.querySelector('input')
+      inputElement.addEventListener('keydown', keyPressed(e))
+    }
+
+    keyPressed = (e) => {
+      switch(e.key) {
+        case 'ArrowUp':
+            console.log('Up arrow pressed');
+            break;
+        case 'ArrowDown':
+            console.log('Down arrow pressed');
+            break;
+        case 'ArrowLeft':
+            console.log('Left arrow pressed');
+            break;
+        case 'ArrowRight':
+            console.log('Right arrow pressed');
+            break;
+    }
+    }
+    //TRANSICIONES
+    //Una es reset que redibuja el tablero y vuelve a llamar a jugar, otra es back que vuelve al estado 2
+    resetBoard(){
+      //devuelvo a tablero en blanco adentro de crearGrid
+      this.crearGrid()
+      this.jugar()
+    }
+
     //GENERO EL TABLERO
     //crea un arreglo 2d en el que vamos a ir guardando la info de las fichas. 0 es vacio, 1 es jug1, 2 es jug2
-    crearGrid(){
-      const $entrada = document.querySelector('#entrada')
+    crearGrid(filasDesignadas, colDesignadas){
       this.elementoDOM.innerHTML = ""
-      
-      
+      let board = Array(filasDesignadas).fill().map(() => Array(colDesignadas).fill(0))
+      console.table(board)
       this.grid = grid
       //actualizar el DOM
+      //TODO
     }
     //DIBUJO (presente en estado 2, estado 3)
     //dibujo ficha en el x,y especificado
@@ -235,8 +223,8 @@ class Juego{
         y-(img.height/2))
     }
     //basado en lo que tiene la matriz, dibujo el canvas
-    updateBoard(){
-
+    drawCanvas(){
+      
     }
     //CHEQUEO CONDICIÓN DE VICTORIA (presente en estado 3)
     //reviso si ya gané, pero desde la posición en la que estoy (ver toda la matriz es más costoso en lectura). Si en ninguna de las direcciones se ganó, se sigue
@@ -248,7 +236,6 @@ class Juego{
         this.chequearEnDireccion(col, fila, 0, 1) == this.cantGanar //abajo
       )
     }
-
     //revisa cuántas de la misma hay seguidas exclusivamente en la dirección indicada por varH y varV
     chequearEnDireccion(col, fila, varH, varV, contador){
       if (this.grid[col][fila] == this.turno){
@@ -265,18 +252,20 @@ class Juego{
     }
     //METODO PRINCIPAL
     jugar(){
-      
+      this.configEntradas()
       do{
-        let colActual = 0;
-        //espero a que clickee en su ficha elegida
-        //pineo la ficha al mouse hasta que clickee una columna válida
+        
         //dejo caer la ficha
         //chequeo victoria
+        if (this.chequearVictoria(this.colActual, this.filaActual)){
+          this.jugando = false
+          reportarVictoria()
+        }
         //cambio de turno
-      this.turno = this.turno==j1?j2:j1
+        if (this.jugando) this.cambiaTurno() 
       }
       //hago un do while pq hay que ejecutar el bucle antes de checkear la condición de victoria
-      while(!this.chequearVictoria(colActual,filaActual && this.jugadaPosible))
+      while(!this.chequearVictoria(this.colActual,this.filaActual && this.jugando))
     }
 }
 
