@@ -210,7 +210,7 @@ class Juego{
       this.elementoDOM.innerHTML = ""
       let board = Array(filasDesignadas).fill().map(() => Array(colDesignadas).fill(0))
       console.table(board)
-      this.grid = grid
+      this.grid = board
       //actualizar el DOM
       //TODO
     }
