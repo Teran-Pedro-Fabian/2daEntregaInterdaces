@@ -85,26 +85,73 @@ const estado2 = ()=>{
       seccion2.classList.add("oculto")
       seccion3.classList.remove("oculto")
       seccion3.classList.add('bloque')
+      const entrada = document.querySelector('#entrada')
+      //RE engorroso hacer esto pero consistente hacerlo con html+css y no dibujar los controles con canvas
+      switch(formaGanar){
+        case 4:
+          entrada.classList.add('col4')
+          entrada.classList.remove('col5')
+          entrada.classList.remove('col6')
+          entrada.classList.remove('col7')
+          break
+        case 5:
+          entrada.classList.remove('col4')  
+          entrada.classList.add('col5')
+          entrada.classList.remove('col6')
+          entrada.classList.remove('col7')
+          break
+        case 6:
+          entrada.classList.remove('col4')
+          entrada.classList.remove('col5')
+          entrada.classList.add('col6')
+          entrada.classList.remove('col7')
+          break
+        case 7:
+          entrada.classList.remove('col4')
+          entrada.classList.remove('col5')
+          entrada.classList.remove('col6')
+          entrada.classList.add('col7')
+          break
+      }
       console.log('PASO AL ESTADO 3') //debug
-      estado3(imagenesElegidas, miCanvas, formaGanar)
+      estado3(
+        //pueden pasarme undefined si nunca eligen ficha... pasaré una por defecto si el valor establecido es falsy (undefined/null/''/0)
+        {
+          jug1: imagenesElegidas.jug1?imagenesElegidas.jug1:fichaCapitanAmerica[0].src,
+          jug2: imagenesElegidas.jug2?imagenesElegidas.jug2:fichaIronMan[0].src
+        }, 
+        miCanvas, 
+        formaGanar)
     })
   }
 
 const estado3 = (img, canvas, size)=>{
   /*ESTADO 3: callback para mantener el game loop/ ir al estado 2 (con respectivos event listener)*/
   console.log('ESTOY EN EL ESTADO 3') //debug
-  // Obtener el contexto del canvas
-  const ctx = canvas.getContext("2d");
+  
+
+    const resetButton = document.querySelector('#reset');
+    resetButton.addEventListener('click', ()=>{
+      juego.blanqueoTablero()
+    })
+    const backButton = document.querySelector('#back');
+    backButton.addEventListener('click',()=>{
+      seccion2.classList.remove("oculto")
+      seccion2.classList.add('bloque')
+      seccion3.classList.remove('bloque')
+      seccion3.classList.add('oculto')
+
+      
+    })
   //instancio clase Juego y lo inicio
-  const juego = new Juego(
+  let juego = new Juego(
     canvas,
     (2*size-2), //se hace -2 para tener una fila que sea para insertar, pero evidentemente no cuenta para la matriz del juego, la condición de victoria se revisa en el arreglo
-    (2*size-1), //vimos otros 4 en línea en internet y todos manejan un 7x6... generalizamos
+    (2*size-1), //vimos otros 4 en línea en internet y todos manejan un 7x6... generalizamos para 5, 6 y 7
     img.jug1.src,
-    img.jug2.src,
+    img.jug2.src,//acá son para que SIEMPRE cargue una imagen por defecto cuando los valores que nos pasan son falsy
     size)
     console.log('CREO UNA INSTANCIA DE JUEGO')
-  juego.jugar()
 }
 
 
@@ -128,6 +175,8 @@ class Juego{
     //necesitamos saber quién va
     this.turno = 1
     this.elementoDOM = elementoDOM
+    // Obtener el contexto del canvas
+    this.ctx = this.elementoDOM.getContext("2d");
     //si alguien gana, jugando se vuelve false (y nuestra función que revisa quién ganó mostrará quién ganó)
     this.jugando = true
     this.cantGanar = cantGanar
@@ -139,18 +188,23 @@ class Juego{
         jug1: img1,
         jug2: img2
     }
+    console.log(this.imagenesElegidas.jug1)
+    console.log(this.imagenesElegidas.jug2)
     this.jug1 = document.querySelector("#jug1")
     this.jug2 = document.querySelector("#jug2")
-    this.crearGrid(filasDesignadas, colDesignadas)
+    //declaro tablero virtual e inicio en 0 todos los lugares
     this.board;
+    this.blanqueoTablero()
+    
+    //declaro acá, los inicio y altero con el configEntradas()
+    this.entrada = Array(this.colDesignadas).fill(0);
     this.colActual = 0
-    this.filaActual = 0
-    //declaro acá, los inicio con el configEntradas()
-    this.entrada;
-    this.resetButton;
-    this.backButton;
-    //y llamo al jugar(), que también llama a su vez a configEntradas. El input pasa a ser responsive cuando ya cargó por completo la función y quedó en ejecución el juego
-    this.jugar()
+    //a este lo asocio después dentro de refresh()
+    this.inputElement;
+    //y acá empieza a tomar interacción
+    console.log('Columna actual: ', this.colActual)
+    console.log('Columnas totales: ', this.columnas)
+    document.addEventListener('keydown', this.manejoTeclado)
   }
   
   //METODOS
@@ -168,64 +222,35 @@ class Juego{
     cambiaTurno(){
       this.turno = this.turno==1?2:1
     }
-    //SETUP
-    //configuro que apreten las flechitas/los botones
-    configEntradas(){
-      this.entrada
-      this.resetButton = document.querySelector("#reset")
-      resetButton.addEventListener('click', resetBoard())
-      this.backButton = document.querySelector('#back')
-      this.backButton.addEventListener('click', goBack())
-      const inputElement = document.querySelector('input')
-      inputElement.addEventListener('keydown', keyPressed(e))
+    //vuelve el tablero al blanco
+    blanqueoTablero = ()=>{
+      this.board = Array(this.colDesignadas).fill().map(() => Array(this.filasDesignadas).fill(0));
+      console.table(this.board)
     }
-
-    keyPressed = (e) => {
+    //SETUP
+    //configuro que apreten las flechitas correspondientes
+    manejoTeclado = (e) => {
       switch(e.key) {
-        case 'ArrowUp':
-            console.log('Up arrow pressed');
-            break;
         case 'ArrowDown':
-            console.log('Down arrow pressed');
+            console.log('Flecha abajo: pongo la ficha si se puede');
+            this.ponerFicha()
             break;
         case 'ArrowLeft':
-            console.log('Left arrow pressed');
+            console.log('Flecha izq: muevo izq si puedo');
+            if(this.colActual>0) this.colActual--
+            console.log('Estoy en la columna: ',this.colActual)
             break;
         case 'ArrowRight':
-            console.log('Right arrow pressed');
+            console.log('Flecha der: muevo der si puedo');
+            if(this.colActual+1<this.columnas) this.colActual++
+            console.log('Estoy en la columna: ',this.colActual)
             break;
+      }
+      console.table(this.board)
+      //this.refresh()
     }
-    }
-    //TRANSICIONES
-    //Una es reset que redibuja el tablero y vuelve a llamar a jugar, otra es back que vuelve al estado 2
-    resetBoard(){
-      //devuelvo a tablero en blanco adentro de crearGrid
-      this.crearGrid()
-      this.jugar()
-    }
+    
 
-    //GENERO EL TABLERO
-    //crea un arreglo 2d en el que vamos a ir guardando la info de las fichas. 0 es vacio, 1 es jug1, 2 es jug2
-    crearGrid(filasDesignadas, colDesignadas){
-      this.elementoDOM.innerHTML = ""
-      let board = Array(filasDesignadas).fill().map(() => Array(colDesignadas).fill(0))
-      console.table(board)
-      this.grid = board
-      //actualizar el DOM
-      //TODO
-    }
-    //DIBUJO (presente en estado 2, estado 3)
-    //dibujo ficha en el x,y especificado
-    dibujarFicha(x,y){
-      ctx.drawImage(
-        this.turno==1?this.imagenesElegidas.jug1:this.imagenesElegidas.jug2,
-        x-(img.width/2),
-        y-(img.height/2))
-    }
-    //basado en lo que tiene la matriz, dibujo el canvas
-    drawCanvas(){
-      
-    }
     //CHEQUEO CONDICIÓN DE VICTORIA (presente en estado 3)
     //reviso si ya gané, pero desde la posición en la que estoy (ver toda la matriz es más costoso en lectura). Si en ninguna de las direcciones se ganó, se sigue
     chequearVictoria(col, fila){
@@ -250,22 +275,35 @@ class Juego{
       else
         return contador
     }
-    //METODO PRINCIPAL
-    jugar(){
-      this.configEntradas()
-      do{
-        
-        //dejo caer la ficha
-        //chequeo victoria
-        if (this.chequearVictoria(this.colActual, this.filaActual)){
-          this.jugando = false
-          reportarVictoria()
+    //METODOS GRAFICOS:
+    //refresh se llama cada vez que tocaron alguna tecla
+    refresh = ()=>{
+      //refresco la entrada
+      this.entrada[this.colActual]=this.turno
+      for (let i = 0; i < this.columnas; i++) {
+        if(this.entrada[i]==this.turno){
+          this.ctx.drawImage(this.turno==1?this.imagenesElegidas.jug1:this.imagenesElegidas.jug2, 600/this.columnas, 0)
         }
-        //cambio de turno
-        if (this.jugando) this.cambiaTurno() 
       }
-      //hago un do while pq hay que ejecutar el bucle antes de checkear la condición de victoria
-      while(!this.chequearVictoria(this.colActual,this.filaActual && this.jugando))
+      //refresco el tablero(canvas)
+      for (let i = 0; i < this.columnas; i++) {
+        for (let j = 0; j < this.filas; j++) {
+          this.ctx.drawImage(
+            ()=>{//contemplen, un callback cuyo switch no necesita de break porque retorna algo antes
+              switch(this.board[i][j]){
+                case 0:
+                break
+                case 1:
+                  return this.imagenesElegidas.jug1
+                case 2:
+                  return this.imagenesElegidas.jug2
+              }
+            }, //acá devuelvo la ruta de la imagen
+            i*(600/this.columnas)+300/this.columnas, //puse 300 porque es 600/2, math
+            (j+1)*(600/this.filas)+300/this.filas //por qué j+1? factor común, necesito dejarle lugar libre a la <ul> que me hace de 'entrada' así que le resto el alto de otra columna más (600 es el alto/ancho por defecto en el CSS)
+          )
+        }
+      }
     }
 }
 

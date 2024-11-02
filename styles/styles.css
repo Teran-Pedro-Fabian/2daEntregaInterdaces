@@ -29,18 +29,15 @@
     --em-2: #C2960F;
     --ntr-100: #F2F2F2;
     --ntr-200: #CCCCCC;
-    /*fuentes y espaciado UNIVERSAL*/
-    /*si algo de espaciado no anda, revisen acá*/
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    
+    /*Tamaño canvas*/
+    --max-canvas-size: 600px;
 }
 
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 /* media para celulares */
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 @media only screen and (max-width: 660px) {
-
-
 ul {
     list-style: none;
 }
@@ -160,7 +157,8 @@ img {
     align-items: center;
     justify-content: center;
     width: 70%;
-    background-image: url("../images/ironmavscapitan.jpg") no-repeat center;
+    background-image: url("../images/ironmavscapitan.jpg");
+    background-position: center;
     background-size: cover;
 }
 
@@ -911,10 +909,7 @@ footer img{
 
 }
 
-
-
-
-    @media only screen and (min-width: 660px) {
+@media only screen and (min-width: 660px) {
     
 /*             ul,
             main,
@@ -1047,7 +1042,8 @@ footer img{
             align-items: center;
             justify-content: center;
             width: 80%;
-            background-image: url("../images/ironmavscapitan.jpg") no-repeat center;
+            background-image: url("../images/ironmavscapitan.jpg");
+            background-position: center;
             background-size: cover;
         }
 
@@ -1081,6 +1077,28 @@ footer img{
             width: 100%;
             height: 120px;
             margin: 1%;
+        }
+
+        /*FUNCIONAMIENTO JUEGO*/
+        #miCanvas{
+            width: var(--max-canvas-size);
+            height: var(--max-canvas-size);
+        }
+        #entrada{
+            width: var(--max-canvas-size);
+        }
+        /*4x2-1=7, 5*2-1=9, 6*2-1=11, 7*2-1=13*/
+        .col4{
+            height: calc(--max-canvas-size/7)px;
+        }
+        .col5{
+            height: calc(--max-canvas-size/9)px;
+        }
+        .col6{
+            height: calc(--max-canvas-size/11)px;
+        }
+        .col7{
+            height: calc(--max-canvas-size/13)px;
         }
         
         /* ------------------------------------------------------------------------------------------------------- */
@@ -1428,6 +1446,8 @@ footer img{
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
+        text-align: center;
     }
 
     .oculto {
