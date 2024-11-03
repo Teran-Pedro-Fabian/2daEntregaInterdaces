@@ -164,7 +164,7 @@ img {
 
 .jug1{
     background-color: var(--1ro-600);
-    color: var(--2do-300);
+    color: var(--2do-200);
 }
 .jug2{
     background-color: var(--1ro-600);
@@ -197,6 +197,10 @@ section div button.btnGame{
     justify-content: center;
     margin: 0px;
     align-items: center;
+}
+
+li.liJuegoInstruccion>p{
+    text-align: center;
 }
 
 .imagenCompartirJuego{

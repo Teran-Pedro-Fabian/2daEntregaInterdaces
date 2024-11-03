@@ -223,6 +223,14 @@ class Juego {
 
     this.imagenesElegidas.jug1.src = img1;
     this.imagenesElegidas.jug2.src = img2;
+
+    this.animating = false;
+    this.fallingPiece = null;
+    this.lastFrameTime = 0;
+    this.gravity = 980; //G=9.8... algo similar capaz?
+    
+    // otro hermoso bind
+    this.animate = this.animate.bind(this);
   }
 
   inicioJuego() {
@@ -239,26 +247,15 @@ class Juego {
 
   dibujarFicha(x, y, width, height, player) {
     if (player == 0) {
-      // es una celda vacía
-      this.ctx.fillStyle = '0f0f0f'; //color muy Sokovia, el que tenga oídos para oír que oiga
-      this.ctx.beginPath();
-      this.ctx.arc(
-        x + width/2,
-        y + height/2,
-        Math.min(width, height)/2 - 5,
-        0,
-        Math.PI * 2
-      );
-      this.ctx.fill();
-    } else { //tiene ficha de alguno de los dos
+      // celda vacía
+      return;
+    } else {
       const img = player == 1 ? this.imagenesElegidas.jug1 : this.imagenesElegidas.jug2;
       if (img) {
-        // si cargó, dibujo la imagen
+        // ficha del jugador
         this.ctx.drawImage(img, x + 5, y + 5, width - 10, height - 10);
       } else {
-        // dibujo un círculo para que el juego se lance igual si por x o por y no entró 
-        // sería complicado que pase, ya procuramos que incluso cuando era undefined pase algo sí o sí,
-        // pero bueno... ya nos pasó que nos queda unresponsive el canvas porque no carga la imagen
+        // por si no carga la imagen, círculos rojo y amarillo
         this.ctx.fillStyle = player == 1 ? 'red' : 'yellow';
         this.ctx.beginPath();
         this.ctx.arc(
@@ -273,36 +270,61 @@ class Juego {
     }
   }
 
+  //dibujo el tablero vacío antes de haber puesto una pieza
   refresh() {
     // limpio el canvas
     this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height);
     
-    // dibujo fondo (podría ser una imagen? sí, pero ya usamos el fondo en el div.juego, ya se entendió que es temática Civil War)
-    this.ctx.fillStyle = '#0066cc';
-    this.ctx.fillRect(0, 100, this.elementoDOM.width, this.elementoDOM.height - 100);
-    
     const anchoCelda = this.elementoDOM.width / this.columnas;
-    const altoCelda = (this.elementoDOM.height - 100) / this.filas;
+    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas;
     
-    // dibujo tablero y área de entrada
-    if (this.jugando) {
-      this.ctx.fillStyle = '#003366';
-      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, 100);
-      this.dibujarFicha(
-        this.colActual * anchoCelda + 10,
-        10,
-        anchoCelda - 20,
-        80,
-        this.turno
-      );
-    }
+    // dibujo el fondo
+    this.ctx.fillStyle = '#0066cc';
+    this.ctx.fillRect(0, anchoCelda, this.elementoDOM.width, this.elementoDOM.height - anchoCelda);
     
+    // lugares libres primero
+    this.ctx.fillStyle = '#003366';
     for (let col = 0; col < this.columnas; col++) {
       for (let row = 0; row < this.filas; row++) {
         const x = col * anchoCelda;
-        const y = row * altoCelda + 100;
-        this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row]);
+        const y = row * altoCelda + anchoCelda;
+        
+        // con un marco circular para los lugares libres
+        this.ctx.beginPath();
+        this.ctx.arc(
+          x + anchoCelda/2,
+          y + altoCelda/2,
+          Math.min(anchoCelda, altoCelda)/2 - 5,
+          0,
+          Math.PI * 2
+        );
+        this.ctx.fillStyle = '#003366';
+        this.ctx.fill();
       }
+    }
+    
+    // y ahora si ya hay algo puesto
+    for (let col = 0; col < this.columnas; col++) {
+      for (let row = 0; row < this.filas; row++) {
+        if (this.board[col][row] != 0) {  // acá reviso si ya tenía algo
+          const x = col * anchoCelda;
+          const y = row * altoCelda + anchoCelda;
+          this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row]);
+        }
+      }
+    }
+    
+    // por último el área de entrada
+    if (this.jugando) {
+      this.ctx.fillStyle = '#003366';
+      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, anchoCelda);
+      this.dibujarFicha(
+        this.colActual * anchoCelda + 5,
+        5,
+        anchoCelda - 10,
+        anchoCelda - 10,
+        this.turno
+      );
     }
   }
 
@@ -324,43 +346,169 @@ class Juego {
     this.turno = 1;
     this.colActual = 0;
     this.refresh();
+    info.innerHTML = ''
     this.actualizarInfoJugador();
   }
 
   ponerFicha() {
-    if (!this.jugando) return;
+    if (!this.jugando || this.animating) return;
     
-    // busco el lugar desocupado que más arriba quede
+    // buscar la fila a la que tiene que caer
+    let targetRow = -1;
     for (let row = this.filas - 1; row >= 0; row--) {
       if (this.board[this.colActual][row] === 0) {
-        this.board[this.colActual][row] = this.turno;
-        this.refresh();
-        //ganó alguien? empataron? siga siga entonces
-        if (this.chequearVictoria(this.colActual, row)) {
-          if(this.turno==1){
-            info.innerHTML = "Todos pueden caer: el gobierno, SHIELD... y Tony Stark también. Gana Capitán América!"
-            info.classList.add('jug1')
-            info.classList.remove('jug2')
-          }else{
-            info.innerHTML = "Fuera de este mundo hay cosas insanas, y no todos nacen con poderes. Cuidemos de ellos. Gana Iron Man!"
-            info.classList.remove('jug1')
-            info.classList.add('jug2')
-          }
-          this.jugando = false;
-        } else if (this.tableroLleno()) {
-          alert("¡Empate!");
-          this.jugando = false;
-        } else {
-          this.turno = this.turno === 1 ? 2 : 1;
-          this.actualizarInfoJugador();
-        }
-        return;
+        targetRow = row;
+        break;
       }
+    }
+    
+    if (targetRow === -1) return; // columna llena
+
+    // empiezo a animar
+    const anchoCelda = this.elementoDOM.width / this.columnas;
+    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas;
+    
+    this.fallingPiece = {
+      col: this.colActual,
+      row: -1, // arranco arriba del tablero
+      targetRow: targetRow,
+      y: anchoCelda / 2, // arranco en el centro del área de entrada
+      velocity: 0,
+      player: this.turno
+    };
+    
+    this.animating = true;
+    this.lastFrameTime = performance.now()
+    requestAnimationFrame(this.animate)
+  }
+
+  animate(currentTime) {
+    if (!this.animating || !this.fallingPiece) return
+
+    const deltaTime = (currentTime - this.lastFrameTime) / 1000 // paso a segundos
+    this.lastFrameTime = currentTime
+
+    const anchoCelda = this.elementoDOM.width / this.columnas
+    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas
+    
+    // calculo la Y a la que debería caer
+    const targetY = anchoCelda + (this.fallingPiece.targetRow * altoCelda) + altoCelda / 2
+    
+    // con gravedad, actualizo posición y velocidad
+    this.fallingPiece.velocity += this.gravity * deltaTime
+    this.fallingPiece.y += this.fallingPiece.velocity * deltaTime
+    
+    // reviso si llegó a su posición
+    if (this.fallingPiece.y >= targetY) {
+      this.fallingPiece.y = targetY
+      this.animating = false
+      
+      // actualizo el tablero
+      this.board[this.fallingPiece.col][this.fallingPiece.targetRow] = this.fallingPiece.player
+      
+      // reviso si gané
+      if (this.chequearVictoria(this.fallingPiece.col, this.fallingPiece.targetRow)) {
+        if(this.turno==1){
+          info.innerHTML = "Todos pueden caer: el gobierno, SHIELD... y Tony Stark también. Gana Capitán América!"
+          info.classList.add('jug1')
+          info.classList.remove('jug2')
+        }else{
+          info.innerHTML = "No todos nacemos con poderes. Cuidemos de los que no pueden. Gana Iron Man!"
+          info.classList.remove('jug1')
+          info.classList.add('jug2')
+        }
+        this.jugando = false
+      } else if (this.tableroLleno()) {
+        info.innerHTML= "¡Empate!"
+        this.jugando = false
+      } else {
+        this.turno = this.turno === 1 ? 2 : 1
+        this.actualizarInfoJugador()
+      }
+      
+      this.fallingPiece = null
+    }
+    
+    // mostrar el estado actual
+    this.refreshWithAnimation()
+    
+    // seguir animando si se necesita
+    if (this.animating) {
+      requestAnimationFrame(this.animate)
+    }
+  }
+
+  refreshWithAnimation() {
+    // limpio el canvas
+    this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height);
+    
+    const anchoCelda = this.elementoDOM.width / this.columnas;
+    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas;
+    
+    // dibujo el fondo
+    this.ctx.fillStyle = '#0066cc';
+    this.ctx.fillRect(0, anchoCelda, this.elementoDOM.width, this.elementoDOM.height - anchoCelda);
+    
+    // lugares libres primero
+    this.ctx.fillStyle = '#003366';
+    for (let col = 0; col < this.columnas; col++) {
+      for (let row = 0; row < this.filas; row++) {
+        const x = col * anchoCelda;
+        const y = row * altoCelda + anchoCelda;
+        
+        // marco circular para lugares libres
+        this.ctx.beginPath();
+        this.ctx.arc(
+          x + anchoCelda/2,
+          y + altoCelda/2,
+          Math.min(anchoCelda, altoCelda)/2 - 5,
+          0,
+          Math.PI * 2
+        );
+        this.ctx.fillStyle = '#003366';
+        this.ctx.fill();
+      }
+    }
+    
+    // y los lugares ocupados
+    for (let col = 0; col < this.columnas; col++) {
+      for (let row = 0; row < this.filas; row++) {
+        if (this.board[col][row] != 0) {  // SÓLO si está ocupado
+          const x = col * anchoCelda;
+          const y = row * altoCelda + anchoCelda;
+          this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row]);
+        }
+      }
+    }
+    
+    // por último el área de entrada
+    if (this.jugando && !this.animating) {
+      this.ctx.fillStyle = '#003366';
+      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, anchoCelda);
+      this.dibujarFicha(
+        this.colActual * anchoCelda + 5,
+        5,
+        anchoCelda - 10,
+        anchoCelda - 10,
+        this.turno
+      );
+    }
+    
+    // pero si existe, dibujá la ficha que está cayendo
+    if (this.fallingPiece) {
+      const x = this.fallingPiece.col * anchoCelda;
+      this.dibujarFicha(
+        x,
+        this.fallingPiece.y - altoCelda/2,
+        anchoCelda,
+        altoCelda,
+        this.fallingPiece.player
+      );
     }
   }
 
   tableroLleno() {
-    //quedarme ese viernes mirando a midu fue una buena decisión
+    //el every devuelve true si todos los elementos del array cumplen con la condición del callback
     return this.board.every(column => column.every(cell => cell !== 0));
   }
 
