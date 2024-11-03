@@ -341,7 +341,7 @@ class Juego {
             info.classList.add('jug1')
             info.classList.remove('jug2')
           }else{
-            info.innerHTML = "Tendríamos que cuidar a los que no tienen nuestras posibilidades, no sabemos qué sea lo próximo a lo que nos enfrentemos. Gana Iron Man!"
+            info.innerHTML = "Fuera de este mundo hay cosas insanas, y no todos nacen con poderes. Cuidemos de ellos. Gana Iron Man!"
             info.classList.remove('jug1')
             info.classList.add('jug2')
           }
