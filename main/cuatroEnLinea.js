@@ -232,7 +232,8 @@ class Juego {
     this.entrada = Array(this.columnas).fill(0);
     this.refresh();
     //este bind nos va a dejar pelados
-    document.addEventListener('keydown', this.manejoTeclado.bind(this));
+    this.elementoDOM.addEventListener('mouseup', this.handleMouseUp.bind(this))
+    this.elementoDOM.addEventListener('mousemove', this.handleMouseMove.bind(this))
     this.actualizarInfoJugador();
   }
 
@@ -363,23 +364,43 @@ class Juego {
     return this.board.every(column => column.every(cell => cell !== 0));
   }
 
-  manejoTeclado(e) {
+  handleMouseMove(event) {
     if (!this.jugando) return;
-    //evito scroll
-    e.preventDefault()
-    //reviso qué apretó
-    switch(e.key) {
-      case 'ArrowLeft':
-        if (this.colActual > 0) this.colActual--;
-        break;
-      case 'ArrowRight':
-        if (this.colActual < this.columnas - 1) this.colActual++;
-        break;
-      case 'ArrowDown':
-        this.ponerFicha();
-        break;
+    
+    // sigo las coordenadas del mouse
+    const rect = this.elementoDOM.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    
+    // calculo columna en la que soltaría basado en la x
+    const anchoCelda = this.elementoDOM.width / this.columnas;
+    const newCol = Math.floor(x / anchoCelda);
+    
+    // sólo actualizo si estoy en rango válido y dentro del área de input
+    if (newCol >= 0 && newCol < this.columnas && event.clientY - rect.top < 100) {
+      this.colActual = newCol;
+      this.refresh();
     }
-    this.refresh();
+  }
+
+  handleMouseUp(event) {
+    if (!this.jugando) return;
+    
+    // reviso las coordenadas basado en el canvas
+    const rect = this.elementoDOM.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    // procesá sólo cuando suelte la ficha en la primera fila
+    if (y < 100) {
+      const anchoCelda = this.elementoDOM.width / this.columnas;
+      const columnaClickeada = Math.floor(x / anchoCelda);
+      
+      // fijate que la deje en un lugar válido!
+      if (columnaClickeada >= 0 && columnaClickeada < this.columnas) {
+        this.colActual = columnaClickeada;
+        this.ponerFicha();
+      }
+    }
   }
 
   chequearVictoria(col, fila) {
