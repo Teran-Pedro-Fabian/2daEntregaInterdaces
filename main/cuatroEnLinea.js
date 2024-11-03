@@ -3,7 +3,7 @@
 *1-Esperando para entrar a jugar
 *2-Elegir fichas y tamaño del tablero
 *3-Jugando
-*Estados 1 y 2 todavía no dibujan canvas (para hacerla menos complicada), pero sí interfaz
+*Estados 1 y 2 todavía no dibujan canvas (para hacerla menos complicada), pero sí por CLI
 *Estado 3 tiene un botoncito de reset (que reinicia el juego: reemplaza la instancia de Juego() por una en blanco) y uno de back (que resta uno al estado)
 *Transiciones:
 *1=>2 al tocar el botón de play
@@ -18,6 +18,8 @@ const j2 = 2;
 const inicio = document.querySelector("#btnJugar"); //con el botón está bien, así se renderiza el HTML base de la página en definitiva, las otras están escondidas
 const seccion2 = document.querySelector('.seccion2')
 const seccion3 = document.querySelector('.seccion3')
+
+let info = document.querySelector('.info')
 
 //precargar el canvas
 const miCanvas = document.getElementById("miCanvas");
@@ -128,7 +130,9 @@ const estado2 = ()=>{
 const estado3 = (img, canvas, size)=>{
   /*ESTADO 3: callback para mantener el game loop/ ir al estado 2 (con respectivos event listener)*/
   console.log('ESTOY EN EL ESTADO 3') //debug
-  
+  //si no hacíamos esto no cazábamos que no tenías que usar .src
+  console.log('img jug1: ',img.jug1)
+  console.log('img jug2: ',img.jug2)
 
     const resetButton = document.querySelector('#reset');
     resetButton.addEventListener('click', ()=>{
@@ -140,170 +144,289 @@ const estado3 = (img, canvas, size)=>{
       seccion2.classList.add('bloque')
       seccion3.classList.remove('bloque')
       seccion3.classList.add('oculto')
-
-      
     })
-  //instancio clase Juego y lo inicio
+  //instancio clase Juego
   let juego = new Juego(
     canvas,
     (2*size-2), //se hace -2 para tener una fila que sea para insertar, pero evidentemente no cuenta para la matriz del juego, la condición de victoria se revisa en el arreglo
-    (2*size-1), //vimos otros 4 en línea en internet y todos manejan un 7x6... generalizamos para 5, 6 y 7
-    img.jug1.src,
-    img.jug2.src,//acá son para que SIEMPRE cargue una imagen por defecto cuando los valores que nos pasan son falsy
+    (2*size-1), //vimos otros 4 en línea en internet y todos manejan un 7x6... generalizamos una fórmula para 5, 6 y 7
+    img.jug1,
+    img.jug2,
     size)
     console.log('CREO UNA INSTANCIA DE JUEGO')
 }
 
 
-//Arranco en estado (del juego) 1: esperando que quieran arrancar a jugar
+//Arranco en estado 1: esperando que quieran arrancar a jugar
 estado1()
 
-/*FIN EJECUCION, ARRANCA DECLARACION DE CLASE*/
-class Juego{
-  //elementoDOM se usa para hacer referencia al canvas, lo vamos a llamar más tarde. X e Y se determinan cuando se decide de cuántas fichas en línea se trata
-  constructor(elementoDOM, //se está pasando directamente referencia al elemento HTML
-    filasDesignadas, //se pasan en función del select
+/*esta clase llama a inicioJuego(), que toma la jugada 
+*después reacciona a la ficha que acaban de poner en todas las posibles direcciones
+*/
+
+class Juego {
+  constructor(
+    elementoDOM, //paso referencia por si tengo que afectar innerHTML
+    filasDesignadas,
     colDesignadas,
-    img1, //se pasan strings con las rutas de lo que cada quién eligió
+    img1,
     img2,
-    cantGanar //se pasa en función del select
+    cantGanar
   ){
-    this.filas = filasDesignadas
-    console.log(this.filas)
-    this.columnas = colDesignadas
-    console.log(this.columnas)
-    //necesitamos saber quién va
-    this.turno = 1
-    this.elementoDOM = elementoDOM
-    // Obtener el contexto del canvas
+    this.filas = filasDesignadas;
+    this.columnas = colDesignadas;
+    this.turno = 1;
+    this.elementoDOM = elementoDOM;
     this.ctx = this.elementoDOM.getContext("2d");
-    //si alguien gana, jugando se vuelve false (y nuestra función que revisa quién ganó mostrará quién ganó)
-    this.jugando = true
-    this.cantGanar = cantGanar
-    //si alguien jugó, lo disparamos desde la función "jugar" y llamamos a un callback para que sea orientado a eventos
-    this.onAlguienJuega = () =>{
-      this.actualizarInfoJugador()
-    }
-    this.imagenesElegidas= {
-        jug1: img1,
-        jug2: img2
-    }
-    console.log(this.imagenesElegidas.jug1)
-    console.log(this.imagenesElegidas.jug2)
-    this.jug1 = document.querySelector("#jug1")
-    this.jug2 = document.querySelector("#jug2")
-    //declaro tablero virtual e inicio en 0 todos los lugares
-    this.board;
-    this.blanqueoTablero()
     
-    //declaro acá, los inicio y altero con el configEntradas()
-    this.entrada = Array(this.colDesignadas).fill(0);
-    this.colActual = 0
-    //a este lo asocio después dentro de refresh()
-    this.inputElement;
-    //y acá empieza a tomar interacción
-    console.log('Columna actual: ', this.colActual)
-    console.log('Columnas totales: ', this.columnas)
-    document.addEventListener('keydown', this.manejoTeclado)
+    // tengo que dejarlo explicitado, capaz lo podríamos dejar en un .env... si esto fuera React o Next :( (cero ganas de hacerlo en un desarrollo vanilla)
+    this.elementoDOM.width = 600;
+    this.elementoDOM.height = 600;
+    
+    this.jugando = true;
+    this.cantGanar = cantGanar;
+    
+    // dejo en blanco para cargarlas después
+    this.imagenesElegidas ={
+      jug1: new Image(),
+      jug2: new Image()
+    };
+    
+    // llevo registro de cuántas imágenes cargué
+    let imgCargadas = 0;
+    const imgTotales = 2;
+    
+    console.log(img1)
+    console.log(img2)
+
+    const onImageLoad = ()=>  {
+      imgCargadas++;
+      if (imgCargadas == imgTotales) {
+        this.inicioJuego();
+      }
+    };
+
+    // cargar imágenes revisando por errores
+    this.imagenesElegidas.jug1.onload = onImageLoad;
+    this.imagenesElegidas.jug1.onerror = ()=>{
+      console.error("error cargando imagen jug1");
+      this.imagenesElegidas.jug1 = null;
+      onImageLoad();
+    };
+
+    this.imagenesElegidas.jug2.onload = onImageLoad;
+    this.imagenesElegidas.jug2.onerror = () => {
+      console.error("error cargando imagen jug2");
+      this.imagenesElegidas.jug2 = null;
+      onImageLoad();
+    };
+
+    this.imagenesElegidas.jug1.src = img1;
+    this.imagenesElegidas.jug2.src = img2;
   }
-  
-  //METODOS
-    //INTERNOS
-    //para cambiar de turno
-    actualizarInfoJugador(){
-      if(this.turno === 1){
-        this.jug1.classList.add("activo")
-        this.jug2.classList.remove("activo")
+
+  inicioJuego() {
+    //dejo las condiciones de arranque: todo en blanco
+    this.colActual = 0;
+    this.blanqueoTablero();
+    this.entrada = Array(this.columnas).fill(0);
+    this.refresh();
+    //este bind nos va a dejar pelados
+    document.addEventListener('keydown', this.manejoTeclado.bind(this));
+    this.actualizarInfoJugador();
+  }
+
+  dibujarFicha(x, y, width, height, player) {
+    if (player == 0) {
+      // es una celda vacía
+      this.ctx.fillStyle = '0f0f0f'; //color muy Sokovia, el que tenga oídos para oír que oiga
+      this.ctx.beginPath();
+      this.ctx.arc(
+        x + width/2,
+        y + height/2,
+        Math.min(width, height)/2 - 5,
+        0,
+        Math.PI * 2
+      );
+      this.ctx.fill();
+    } else { //tiene ficha de alguno de los dos
+      const img = player == 1 ? this.imagenesElegidas.jug1 : this.imagenesElegidas.jug2;
+      if (img) {
+        // si cargó, dibujo la imagen
+        this.ctx.drawImage(img, x + 5, y + 5, width - 10, height - 10);
       } else {
-        this.jug2.classList.add("activo")
-        this.jug1.classList.remove("activo")
+        // dibujo un círculo para que el juego se lance igual si por x o por y no entró 
+        // sería complicado que pase, ya procuramos que incluso cuando era undefined pase algo sí o sí,
+        // pero bueno... ya nos pasó que nos queda unresponsive el canvas porque no carga la imagen
+        this.ctx.fillStyle = player == 1 ? 'red' : 'yellow';
+        this.ctx.beginPath();
+        this.ctx.arc(
+          x + width/2,
+          y + height/2,
+          Math.min(width, height)/2 - 5,
+          0,
+          Math.PI * 2
+        );
+        this.ctx.fill();
       }
     }
-    cambiaTurno(){
-      this.turno = this.turno==1?2:1
-    }
-    //vuelve el tablero al blanco
-    blanqueoTablero = ()=>{
-      this.board = Array(this.colDesignadas).fill().map(() => Array(this.filasDesignadas).fill(0));
-      console.table(this.board)
-    }
-    //SETUP
-    //configuro que apreten las flechitas correspondientes
-    manejoTeclado = (e) => {
-      switch(e.key) {
-        case 'ArrowDown':
-            console.log('Flecha abajo: pongo la ficha si se puede');
-            this.ponerFicha()
-            break;
-        case 'ArrowLeft':
-            console.log('Flecha izq: muevo izq si puedo');
-            if(this.colActual>0) this.colActual--
-            console.log('Estoy en la columna: ',this.colActual)
-            break;
-        case 'ArrowRight':
-            console.log('Flecha der: muevo der si puedo');
-            if(this.colActual+1<this.columnas) this.colActual++
-            console.log('Estoy en la columna: ',this.colActual)
-            break;
-      }
-      console.table(this.board)
-      //this.refresh()
+  }
+
+  refresh() {
+    // limpio el canvas
+    this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height);
+    
+    // dibujo fondo (podría ser una imagen? sí, pero ya usamos el fondo en el div.juego, ya se entendió que es temática Civil War)
+    this.ctx.fillStyle = '#0066cc';
+    this.ctx.fillRect(0, 100, this.elementoDOM.width, this.elementoDOM.height - 100);
+    
+    const anchoCelda = this.elementoDOM.width / this.columnas;
+    const altoCelda = (this.elementoDOM.height - 100) / this.filas;
+    
+    // dibujo tablero y área de entrada
+    if (this.jugando) {
+      this.ctx.fillStyle = '#003366';
+      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, 100);
+      this.dibujarFicha(
+        this.colActual * anchoCelda + 10,
+        10,
+        anchoCelda - 20,
+        80,
+        this.turno
+      );
     }
     
+    for (let col = 0; col < this.columnas; col++) {
+      for (let row = 0; row < this.filas; row++) {
+        const x = col * anchoCelda;
+        const y = row * altoCelda + 100;
+        this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row]);
+      }
+    }
+  }
 
-    //CHEQUEO CONDICIÓN DE VICTORIA (presente en estado 3)
-    //reviso si ya gané, pero desde la posición en la que estoy (ver toda la matriz es más costoso en lectura). Si en ninguna de las direcciones se ganó, se sigue
-    chequearVictoria(col, fila){
-      return(
-        this.chequearEnDireccion(col, fila, -1, -1) + this.chequearEnDireccion(col, fila, 1, 1) - 1 == this.cantGanar || //diag desc: arriba izq+abajo der
-        this.chequearEnDireccion(col, fila, -1, 0) + this.chequearEnDireccion(col, fila, 1, 0) - 1 == this.cantGanar || //horizontal: izq+der
-        this.chequearEnDireccion(col, fila, -1, 1) + this.chequearEnDireccion(col, fila, 1, -1) - 1 == this.cantGanar || //diag crec: der arr+abajo izq
-        this.chequearEnDireccion(col, fila, 0, 1) == this.cantGanar //abajo
-      )
+  actualizarInfoJugador() {
+    const jug1 = document.querySelector("#jug1");
+    const jug2 = document.querySelector("#jug2");
+    if (this.turno === 1) {
+      jug1?.classList.add("activo");
+      jug2?.classList.remove("activo");
+    } else {
+      jug2?.classList.add("activo");
+      jug1?.classList.remove("activo");
     }
-    //revisa cuántas de la misma hay seguidas exclusivamente en la dirección indicada por varH y varV
-    chequearEnDireccion(col, fila, varH, varV, contador){
-      if (this.grid[col][fila] == this.turno){
-        contador++
-        //si ya gané, corto la ejecución
-        if (contador == this.cantGanar) 
-          return contador
-      }
-      //si la posición que voy a revisar es válida, reviso; de otra manera ya llegué a un límite y no puedo seguir
-      if(0 <= col+varH && col+varH < this.grid.length && 0 <= fila+varV && fila+varV <this.grid[0].length)
-        return this.chequearEnDireccion(col+varH, fila+varV, varH, varV, contador)
-      else
-        return contador
-    }
-    //METODOS GRAFICOS:
-    //refresh se llama cada vez que tocaron alguna tecla
-    refresh = ()=>{
-      //refresco la entrada
-      this.entrada[this.colActual]=this.turno
-      for (let i = 0; i < this.columnas; i++) {
-        if(this.entrada[i]==this.turno){
-          this.ctx.drawImage(this.turno==1?this.imagenesElegidas.jug1:this.imagenesElegidas.jug2, 600/this.columnas, 0)
+  }
+
+  blanqueoTablero() {
+    this.board = Array(this.columnas).fill().map(() => Array(this.filas).fill(0));
+    this.jugando = true;
+    this.turno = 1;
+    this.colActual = 0;
+    this.refresh();
+    this.actualizarInfoJugador();
+  }
+
+  ponerFicha() {
+    if (!this.jugando) return;
+    
+    // busco el lugar desocupado que más arriba quede
+    for (let row = this.filas - 1; row >= 0; row--) {
+      if (this.board[this.colActual][row] === 0) {
+        this.board[this.colActual][row] = this.turno;
+        this.refresh();
+        //ganó alguien? empataron? siga siga entonces
+        if (this.chequearVictoria(this.colActual, row)) {
+          if(this.turno==1){
+            info.innerHTML = "Todos pueden caer: el gobierno, SHIELD... y Tony Stark también. Gana Capitán América!"
+            info.classList.add('jug1')
+            info.classList.remove('jug2')
+          }else{
+            info.innerHTML = "Tendríamos que cuidar a los que no tienen nuestras posibilidades, no sabemos qué sea lo próximo a lo que nos enfrentemos. Gana Iron Man!"
+            info.classList.remove('jug1')
+            info.classList.add('jug2')
+          }
+          this.jugando = false;
+        } else if (this.tableroLleno()) {
+          alert("¡Empate!");
+          this.jugando = false;
+        } else {
+          this.turno = this.turno === 1 ? 2 : 1;
+          this.actualizarInfoJugador();
         }
-      }
-      //refresco el tablero(canvas)
-      for (let i = 0; i < this.columnas; i++) {
-        for (let j = 0; j < this.filas; j++) {
-          this.ctx.drawImage(
-            ()=>{//contemplen, un callback cuyo switch no necesita de break porque retorna algo antes
-              switch(this.board[i][j]){
-                case 0:
-                break
-                case 1:
-                  return this.imagenesElegidas.jug1
-                case 2:
-                  return this.imagenesElegidas.jug2
-              }
-            }, //acá devuelvo la ruta de la imagen
-            i*(600/this.columnas)+300/this.columnas, //puse 300 porque es 600/2, math
-            (j+1)*(600/this.filas)+300/this.filas //por qué j+1? factor común, necesito dejarle lugar libre a la <ul> que me hace de 'entrada' así que le resto el alto de otra columna más (600 es el alto/ancho por defecto en el CSS)
-          )
-        }
+        return;
       }
     }
+  }
+
+  tableroLleno() {
+    //quedarme ese viernes mirando a midu fue una buena decisión
+    return this.board.every(column => column.every(cell => cell !== 0));
+  }
+
+  manejoTeclado(e) {
+    if (!this.jugando) return;
+    //evito scroll
+    e.preventDefault()
+    //reviso qué apretó
+    switch(e.key) {
+      case 'ArrowLeft':
+        if (this.colActual > 0) this.colActual--;
+        break;
+      case 'ArrowRight':
+        if (this.colActual < this.columnas - 1) this.colActual++;
+        break;
+      case 'ArrowDown':
+        this.ponerFicha();
+        break;
+    }
+    this.refresh();
+  }
+
+  chequearVictoria(col, fila) {
+    //gracias midu x2 (nerdearla 2024, creo que 18/10)
+    const direcciones = [
+      [0, 1],  // vertical
+      [1, 0],  // horizontal
+      [1, 1],  // diag der
+      [1, -1]  // diag izq
+    ];
+    
+    return direcciones.some(([dx, dy]) => {
+      let count = 1;
+      
+      // reviso sumando
+      for (let i = 1; i < this.cantGanar; i++) {
+        const proxCol = col + (dx * i);
+        const proxFila = fila + (dy * i);
+        
+        if (!this.puedoPonerAhi(proxCol, proxFila) ||
+            this.board[proxCol][proxFila] !== this.turno) break;
+        count++;
+      }
+      
+      // reviso restando
+      for (let i = 1; i < this.cantGanar; i++) {
+        const proxCol = col - (dx * i);
+        const proxFila = fila - (dy * i);
+        
+        if (!this.puedoPonerAhi(proxCol, proxFila) ||
+            this.board[proxCol][proxFila] !== this.turno) break;
+        count++;
+      }
+      
+      /*sólo aumento la cantidad de conectadas sí y solo sí
+      * 1-el lugar donde quiero chequear está ocupado
+      * 2-es una ficha de las del que está jugando
+      * 
+      * como voy aumentando de a 1, es N-extensible
+      * y puede pasar que tenga más que N como en los juegos de Facebook que conectás cosas y te da bonus
+      */
+      return count >= this.cantGanar;
+    });
+  }
+
+  puedoPonerAhi(col, row) {
+    return col >= 0 && col < this.columnas &&
+           row >= 0 && row < this.filas;
+  }
 }
-

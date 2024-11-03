@@ -162,6 +162,13 @@ img {
     background-size: cover;
 }
 
+.jug1{
+    color: var(--2do-300);
+}
+.jug2{
+    color: var(--3ro-300);
+}
+
 section div button.btnGame{
     width: 20%; 
     position: absolute;
