@@ -236,34 +236,34 @@ class Juego {
     this.animate = this.animate.bind(this)
   }
   //TIMER
-  startTimer() {
+  arrancoTimer() {
     this.timeRemaining = this.timerDuration;
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
-    this.updateTimerDisplay();
+    this.actualizarElementoTimer();
     this.timerInterval = setInterval(() => {
       this.timeRemaining--;
-      this.updateTimerDisplay();
+      this.actualizarElementoTimer();
       
       if (this.timeRemaining <= 0) {
         clearInterval(this.timerInterval);
         // Switch turns when time runs out
         this.turno = this.turno === 1 ? 2 : 1;
         this.actualizarInfoJugador();
-        this.startTimer(); // Start timer for next player
+        this.arrancoTimer(); // Start timer for next player
       }
     }, 1000);
   }
 
-  updateTimerDisplay() {
+  actualizarElementoTimer() {
     const timerElement = document.querySelector("#timer")
     if (timerElement) {
       timerElement.textContent = `Tiempo: ${this.timeRemaining}s`
     }
   }
 
-  stopTimer() {
+  detenerTimer() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval)
       this.timerInterval = null
@@ -280,7 +280,7 @@ class Juego {
     this.elementoDOM.addEventListener('mouseup', this.handleMouseUp.bind(this))
     this.elementoDOM.addEventListener('mousemove', this.handleMouseMove.bind(this))
     this.actualizarInfoJugador()
-    this.startTimer()
+    this.arrancoTimer()
   }
 
   dibujarFicha(x, y, width, height, player) {
@@ -381,7 +381,7 @@ class Juego {
     }
   }
 
-  //una suerte de reseteo, devuelve todo a su estado original
+  //un reseteo, devuelve todo a su estado original
   blanqueoTablero() {
     this.board = Array(this.columnas).fill().map(() => Array(this.filas).fill(0))
     this.jugando = true
@@ -390,7 +390,7 @@ class Juego {
     this.refresh()
     info.innerHTML = ''
     this.actualizarInfoJugador()
-    this.startTimer()
+    this.arrancoTimer()
   }
 
   //busca la fila a la que debe caer la ficha, y dispara la animación
@@ -457,22 +457,21 @@ class Juego {
           info.innerHTML = "Todos pueden caer: el gobierno, SHIELD... y Tony Stark también. Gana Capitán América!"
           info.classList.add('jug1')
           info.classList.remove('jug2')
-          this.stopTimer()
         }else{
           info.innerHTML = "No todos nacemos con poderes. Cuidemos de los que no pueden. Gana Iron Man!"
           info.classList.remove('jug1')
           info.classList.add('jug2')
-          this.stopTimer()
         }
         this.jugando = false
+        this.detenerTimer()
       } else if (this.tableroLleno()) {
         info.innerHTML= "¡Empate!"
         this.jugando = false
-        this.stopTimer()
+        this.detenerTimer()
       } else {
         this.turno = this.turno === 1 ? 2 : 1
         this.actualizarInfoJugador()
-        this.startTimer()
+        this.arrancoTimer()
       }
       
       this.fallingPiece = null
@@ -487,7 +486,7 @@ class Juego {
     }
   }
 
-  //dibuja cuando la ficha cae
+  //dibuja mientras la ficha cae
   refreshWithAnimation() {
     // limpio el canvas
     this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height)
@@ -562,6 +561,8 @@ class Juego {
     return this.board.every(column => column.every(cell => cell !== 0));
   }
 
+  //CONTROLES acá uso el mouse como entrada
+  //si se mueve el mouse
   handleMouseMove(event) {
     if (!this.jugando) return;
     
@@ -579,7 +580,7 @@ class Juego {
       this.refresh();
     }
   }
-
+  //si suelto el clic
   handleMouseUp(event) {
     if (!this.jugando) return;
     
@@ -601,8 +602,8 @@ class Juego {
     }
   }
 
+  //
   chequearVictoria(col, fila) {
-    //gracias midu x2 (nerdearla 2024, creo que 18/10)
     const direcciones = [
       [0, 1],  // vertical
       [1, 0],  // horizontal
@@ -638,12 +639,13 @@ class Juego {
       * 2-es una ficha de las del que está jugando
       * 
       * como voy aumentando de a 1, es N-extensible
-      * y puede pasar que tenga más que N como en los juegos de Facebook que conectás cosas y te da bonus
+      * y puede pasar que tenga más que N como en los juegos de Facebook que conectás cosas y te da bonus, pero todavía no lo podemos hacer andar...
       */
       return count >= this.cantGanar;
     });
   }
 
+  //que esté en una posición válida, osea no afuera del tablero
   puedoPonerAhi(col, row) {
     return col >= 0 && col < this.columnas &&
            row >= 0 && row < this.filas;
