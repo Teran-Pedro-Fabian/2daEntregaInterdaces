@@ -185,6 +185,10 @@ class Juego {
     
     this.jugando = true;
     this.cantGanar = cantGanar;
+
+    this.duracionTimer = 45 // 45 segundos por turno, puede modificarse
+    this.tiempoFalta = this.duracionTimer
+    this.intervaloTimer = null
     
     // dejo en blanco para cargarlas después
     this.imagenesElegidas ={
@@ -193,79 +197,114 @@ class Juego {
     };
     
     // llevo registro de cuántas imágenes cargué
-    let imgCargadas = 0;
-    const imgTotales = 2;
+    let imgCargadas = 0
+    const imgTotales = 2
     
     console.log(img1)
     console.log(img2)
 
     const onImageLoad = ()=>  {
-      imgCargadas++;
+      imgCargadas++
       if (imgCargadas == imgTotales) {
-        this.inicioJuego();
+        this.inicioJuego()
       }
     };
 
     // cargar imágenes revisando por errores
     this.imagenesElegidas.jug1.onload = onImageLoad;
     this.imagenesElegidas.jug1.onerror = ()=>{
-      console.error("error cargando imagen jug1");
-      this.imagenesElegidas.jug1 = null;
-      onImageLoad();
+      console.error("error cargando imagen jug1")
+      this.imagenesElegidas.jug1 = null
+      onImageLoad()
     };
 
     this.imagenesElegidas.jug2.onload = onImageLoad;
     this.imagenesElegidas.jug2.onerror = () => {
-      console.error("error cargando imagen jug2");
-      this.imagenesElegidas.jug2 = null;
-      onImageLoad();
+      console.error("error cargando imagen jug2")
+      this.imagenesElegidas.jug2 = null
+      onImageLoad()
     };
 
-    this.imagenesElegidas.jug1.src = img1;
-    this.imagenesElegidas.jug2.src = img2;
+    this.imagenesElegidas.jug1.src = img1
+    this.imagenesElegidas.jug2.src = img2
 
-    this.animating = false;
-    this.fallingPiece = null;
-    this.lastFrameTime = 0;
-    this.gravity = 980; //G=9.8... algo similar capaz?
+    this.animating = false
+    this.fallingPiece = null
+    this.lastFrameTime = 0
+    this.gravity = 980 //G=9.8... algo similar
     
-    // otro hermoso bind
-    this.animate = this.animate.bind(this);
+    this.animate = this.animate.bind(this)
+  }
+  //TIMER
+  startTimer() {
+    this.timeRemaining = this.timerDuration;
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+    this.updateTimerDisplay();
+    this.timerInterval = setInterval(() => {
+      this.timeRemaining--;
+      this.updateTimerDisplay();
+      
+      if (this.timeRemaining <= 0) {
+        clearInterval(this.timerInterval);
+        // Switch turns when time runs out
+        this.turno = this.turno === 1 ? 2 : 1;
+        this.actualizarInfoJugador();
+        this.startTimer(); // Start timer for next player
+      }
+    }, 1000);
+  }
+
+  updateTimerDisplay() {
+    const timerElement = document.querySelector("#timer")
+    if (timerElement) {
+      timerElement.textContent = `Tiempo: ${this.timeRemaining}s`
+    }
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval)
+      this.timerInterval = null
+    }
   }
 
   inicioJuego() {
     //dejo las condiciones de arranque: todo en blanco
-    this.colActual = 0;
-    this.blanqueoTablero();
-    this.entrada = Array(this.columnas).fill(0);
-    this.refresh();
+    this.colActual = 0
+    this.blanqueoTablero()
+    this.entrada = Array(this.columnas).fill(0)
+    this.refresh()
     //este bind nos va a dejar pelados
     this.elementoDOM.addEventListener('mouseup', this.handleMouseUp.bind(this))
     this.elementoDOM.addEventListener('mousemove', this.handleMouseMove.bind(this))
-    this.actualizarInfoJugador();
+    this.actualizarInfoJugador()
+    this.startTimer()
   }
 
   dibujarFicha(x, y, width, height, player) {
     if (player == 0) {
       // celda vacía
-      return;
+      return
     } else {
-      const img = player == 1 ? this.imagenesElegidas.jug1 : this.imagenesElegidas.jug2;
+      //aplica la imagen que corresponda
+      const img = player == 1 ? this.imagenesElegidas.jug1 : this.imagenesElegidas.jug2
       if (img) {
         // ficha del jugador
-        this.ctx.drawImage(img, x + 5, y + 5, width - 10, height - 10);
+        this.ctx.drawImage(img, x + 5, y + 5, width - 10, height - 10)
       } else {
-        // por si no carga la imagen, círculos rojo y amarillo
-        this.ctx.fillStyle = player == 1 ? 'red' : 'yellow';
-        this.ctx.beginPath();
+        // por si no carga la imagen, círculos rojo y amarillo. puede llegar a pasar, mejor estar prevenido
+        this.ctx.fillStyle = player == 1 ? 'red' : 'yellow'
+        this.ctx.beginPath()
         this.ctx.arc(
           x + width/2,
           y + height/2,
           Math.min(width, height)/2 - 5,
           0,
           Math.PI * 2
-        );
-        this.ctx.fill();
+        )
+        this.ctx.fill()
       }
     }
   }
@@ -273,21 +312,21 @@ class Juego {
   //dibujo el tablero vacío antes de haber puesto una pieza
   refresh() {
     // limpio el canvas
-    this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height);
+    this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height)
     
-    const anchoCelda = this.elementoDOM.width / this.columnas;
-    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas;
+    const anchoCelda = this.elementoDOM.width / this.columnas
+    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas
     
     // dibujo el fondo
-    this.ctx.fillStyle = '#0066cc';
-    this.ctx.fillRect(0, anchoCelda, this.elementoDOM.width, this.elementoDOM.height - anchoCelda);
+    this.ctx.fillStyle = '#0066cc'
+    this.ctx.fillRect(0, anchoCelda, this.elementoDOM.width, this.elementoDOM.height - anchoCelda)
     
     // lugares libres primero
-    this.ctx.fillStyle = '#003366';
+    this.ctx.fillStyle = '#003366'
     for (let col = 0; col < this.columnas; col++) {
       for (let row = 0; row < this.filas; row++) {
-        const x = col * anchoCelda;
-        const y = row * altoCelda + anchoCelda;
+        const x = col * anchoCelda
+        const y = row * altoCelda + anchoCelda
         
         // con un marco circular para los lugares libres
         this.ctx.beginPath();
@@ -298,7 +337,7 @@ class Juego {
           0,
           Math.PI * 2
         );
-        this.ctx.fillStyle = '#003366';
+        this.ctx.fillStyle = '#003366'
         this.ctx.fill();
       }
     }
@@ -307,54 +346,59 @@ class Juego {
     for (let col = 0; col < this.columnas; col++) {
       for (let row = 0; row < this.filas; row++) {
         if (this.board[col][row] != 0) {  // acá reviso si ya tenía algo
-          const x = col * anchoCelda;
-          const y = row * altoCelda + anchoCelda;
-          this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row]);
+          const x = col * anchoCelda
+          const y = row * altoCelda + anchoCelda
+          this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row])
         }
       }
     }
     
     // por último el área de entrada
     if (this.jugando) {
-      this.ctx.fillStyle = '#003366';
-      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, anchoCelda);
+      this.ctx.fillStyle = '#003366'
+      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, anchoCelda)
       this.dibujarFicha(
         this.colActual * anchoCelda + 5,
         5,
         anchoCelda - 10,
         anchoCelda - 10,
         this.turno
-      );
+      )
     }
   }
 
+  //actualiza la img a dibujar basado en el cambio de turno
   actualizarInfoJugador() {
-    const jug1 = document.querySelector("#jug1");
-    const jug2 = document.querySelector("#jug2");
+    const jug1 = document.querySelector("#jug1")
+    const jug2 = document.querySelector("#jug2")
     if (this.turno === 1) {
-      jug1?.classList.add("activo");
-      jug2?.classList.remove("activo");
+      //jug1 o jug2 pueden traer undefined, por eso el ?
+      jug1?.classList.add("activo")
+      jug2?.classList.remove("activo")
     } else {
-      jug2?.classList.add("activo");
-      jug1?.classList.remove("activo");
+      jug2?.classList.add("activo")
+      jug1?.classList.remove("activo")
     }
   }
 
+  //una suerte de reseteo, devuelve todo a su estado original
   blanqueoTablero() {
-    this.board = Array(this.columnas).fill().map(() => Array(this.filas).fill(0));
-    this.jugando = true;
-    this.turno = 1;
-    this.colActual = 0;
-    this.refresh();
+    this.board = Array(this.columnas).fill().map(() => Array(this.filas).fill(0))
+    this.jugando = true
+    this.turno = 1
+    this.colActual = 0
+    this.refresh()
     info.innerHTML = ''
-    this.actualizarInfoJugador();
+    this.actualizarInfoJugador()
+    this.startTimer()
   }
 
+  //busca la fila a la que debe caer la ficha, y dispara la animación
   ponerFicha() {
-    if (!this.jugando || this.animating) return;
+    if (!this.jugando || this.animating) return
     
     // buscar la fila a la que tiene que caer
-    let targetRow = -1;
+    let targetRow = -1
     for (let row = this.filas - 1; row >= 0; row--) {
       if (this.board[this.colActual][row] === 0) {
         targetRow = row;
@@ -377,11 +421,12 @@ class Juego {
       player: this.turno
     };
     
-    this.animating = true;
+    this.animating = true
     this.lastFrameTime = performance.now()
     requestAnimationFrame(this.animate)
   }
 
+  //se encarga de continuar con la animación o si ya llegó a su lugar, detiene la ficha y dispara comprobaciones/dibujo
   animate(currentTime) {
     if (!this.animating || !this.fallingPiece) return
 
@@ -412,18 +457,22 @@ class Juego {
           info.innerHTML = "Todos pueden caer: el gobierno, SHIELD... y Tony Stark también. Gana Capitán América!"
           info.classList.add('jug1')
           info.classList.remove('jug2')
+          this.stopTimer()
         }else{
           info.innerHTML = "No todos nacemos con poderes. Cuidemos de los que no pueden. Gana Iron Man!"
           info.classList.remove('jug1')
           info.classList.add('jug2')
+          this.stopTimer()
         }
         this.jugando = false
       } else if (this.tableroLleno()) {
         info.innerHTML= "¡Empate!"
         this.jugando = false
+        this.stopTimer()
       } else {
         this.turno = this.turno === 1 ? 2 : 1
         this.actualizarInfoJugador()
+        this.startTimer()
       }
       
       this.fallingPiece = null
@@ -438,23 +487,24 @@ class Juego {
     }
   }
 
+  //dibuja cuando la ficha cae
   refreshWithAnimation() {
     // limpio el canvas
-    this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height);
+    this.ctx.clearRect(0, 0, this.elementoDOM.width, this.elementoDOM.height)
     
-    const anchoCelda = this.elementoDOM.width / this.columnas;
-    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas;
+    const anchoCelda = this.elementoDOM.width / this.columnas
+    const altoCelda = (this.elementoDOM.height - anchoCelda) / this.filas
     
     // dibujo el fondo
-    this.ctx.fillStyle = '#0066cc';
-    this.ctx.fillRect(0, anchoCelda, this.elementoDOM.width, this.elementoDOM.height - anchoCelda);
+    this.ctx.fillStyle = '#0066cc'
+    this.ctx.fillRect(0, anchoCelda, this.elementoDOM.width, this.elementoDOM.height - anchoCelda)
     
     // lugares libres primero
-    this.ctx.fillStyle = '#003366';
+    this.ctx.fillStyle = '#003366'
     for (let col = 0; col < this.columnas; col++) {
       for (let row = 0; row < this.filas; row++) {
-        const x = col * anchoCelda;
-        const y = row * altoCelda + anchoCelda;
+        const x = col * anchoCelda
+        const y = row * altoCelda + anchoCelda
         
         // marco circular para lugares libres
         this.ctx.beginPath();
@@ -464,9 +514,9 @@ class Juego {
           Math.min(anchoCelda, altoCelda)/2 - 5,
           0,
           Math.PI * 2
-        );
-        this.ctx.fillStyle = '#003366';
-        this.ctx.fill();
+        )
+        this.ctx.fillStyle = '#003366'
+        this.ctx.fill()
       }
     }
     
@@ -474,9 +524,9 @@ class Juego {
     for (let col = 0; col < this.columnas; col++) {
       for (let row = 0; row < this.filas; row++) {
         if (this.board[col][row] != 0) {  // SÓLO si está ocupado
-          const x = col * anchoCelda;
-          const y = row * altoCelda + anchoCelda;
-          this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row]);
+          const x = col * anchoCelda
+          const y = row * altoCelda + anchoCelda
+          this.dibujarFicha(x, y, anchoCelda, altoCelda, this.board[col][row])
         }
       }
     }
@@ -484,19 +534,19 @@ class Juego {
     // por último el área de entrada
     if (this.jugando && !this.animating) {
       this.ctx.fillStyle = '#003366';
-      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, anchoCelda);
+      this.ctx.fillRect(this.colActual * anchoCelda, 0, anchoCelda, anchoCelda)
       this.dibujarFicha(
         this.colActual * anchoCelda + 5,
         5,
         anchoCelda - 10,
         anchoCelda - 10,
         this.turno
-      );
+      )
     }
     
     // pero si existe, dibujá la ficha que está cayendo
     if (this.fallingPiece) {
-      const x = this.fallingPiece.col * anchoCelda;
+      const x = this.fallingPiece.col * anchoCelda
       this.dibujarFicha(
         x,
         this.fallingPiece.y - altoCelda/2,
@@ -507,8 +557,8 @@ class Juego {
     }
   }
 
+  //el every devuelve true si todos los elementos del array cumplen con la condición del callback (que el tablero haya quedado saturado)
   tableroLleno() {
-    //el every devuelve true si todos los elementos del array cumplen con la condición del callback
     return this.board.every(column => column.every(cell => cell !== 0));
   }
 
